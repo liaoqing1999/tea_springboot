@@ -1,0 +1,15 @@
+
+spring:
+  data:
+    mongodb:
+      database: tea
+      host: 127.0.0.1
+      option:
+        socket-keep-alive: true
+        max-connection-idle-time: 60000
+      port: 27017
+      username: root
+      password: root
+
+server:
+  port: 8090
