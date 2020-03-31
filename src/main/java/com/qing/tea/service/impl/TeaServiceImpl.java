@@ -1,0 +1,79 @@
+package com.qing.tea.service.impl;
+
+import com.qing.tea.entity.Tea;
+import com.qing.tea.service.TeaService;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
+import java.util.regex.Pattern;
+
+@Service
+public class TeaServiceImpl implements TeaService {
+
+    @Resource
+    private MongoTemplate mongoTemplate;
+
+    @Override
+    public void insert(Tea tea) {
+        mongoTemplate.insert(tea);
+    }
+
+    @Override
+    public void delete(String id) {
+        Query query=new Query(Criteria.where("_id").is(id));
+        mongoTemplate.remove(query,Tea.class);
+    }
+
+    @Override
+    public void update(String id,String name,String value) {
+        Query query=new Query(Criteria.where("_id").is(id));
+        Update update = Update.update(name, value);
+        mongoTemplate.updateFirst(query, update, Tea.class);
+    }
+
+    @Override
+    public Tea find(String id) {
+        Query query=new Query(Criteria.where("id").is(id));
+        List<Tea> teas = mongoTemplate.find(query, Tea.class);
+        return teas.get(0);
+    }
+
+    @Override
+    public List<Tea> findAll() {
+        return mongoTemplate.findAll(Tea.class);
+    }
+
+    @Override
+    public List<Tea> findByCond(String name, String value) {
+        Query query=new Query(Criteria.where(name).is(value));
+        List<Tea> teas = mongoTemplate.find(query, Tea.class);
+        return teas;
+    }
+
+    @Override
+    public List<Tea> findLike(String name, String searchKey) {
+        Pattern pattern = Pattern.compile("^.*" + searchKey + ".*$");//这里时使用的是正则匹配,searchKey是关键字，接口传参，也可以自己定义。
+        Criteria criteria = Criteria.where("_id").regex(pattern);
+        Query query = new Query(criteria);
+        return mongoTemplate.find(query, Tea.class);
+    }
+
+    @Override
+    public List<Tea> findList(int page, int rows) {
+        Query query = new Query();
+        query.skip(page*rows).limit(rows);
+        return mongoTemplate.find(query, Tea.class);
+    }
+    @Override
+    public long getCount() {
+        Query query = new Query();
+        long count = mongoTemplate.count(query, Tea.class);
+        return count;
+    }
+
+}
