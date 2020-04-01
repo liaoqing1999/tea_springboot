@@ -28,4 +28,6 @@ public class Plant {
     */
     @Field("img")
     private String[] img;
+
+
 }

@@ -27,7 +27,7 @@ public class TeaController {
     @RequestMapping("getAll")
     @ResponseBody
     public R getAll(){
-        return R.success(teaService.findAll());
+        return R.success(teaService.findAll().get(0));
     }
 
     @RequestMapping("test")

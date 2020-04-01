@@ -10,14 +10,14 @@ public class Check {
     /*
     检测类型
     */
-    @Field("type")
-    private String type;
+    @Field("type_id")
+    private String typeId;
 
     /*
     检测日期
   */
-    @Field("startDate")
-    private Date startDate;
+    @Field("date")
+    private Date date;
 
     /*
       检测结果

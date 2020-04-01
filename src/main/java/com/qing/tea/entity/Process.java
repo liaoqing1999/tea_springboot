@@ -16,13 +16,13 @@ public class Process {
     /*
     开始日期
   */
-    @Field("startDate")
+    @Field("start_date")
     private Date startDate;
 
     /*
       结束日期
       */
-    @Field("endDate")
+    @Field("end_date")
     private Date endDate;
 
     /*
@@ -30,4 +30,10 @@ public class Process {
       */
     @Field("processer")
     private String processer;
+
+    /*
+        图片
+    */
+    @Field("img")
+    private String[] img;
 }

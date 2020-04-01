@@ -16,9 +16,9 @@ public class Tea implements Serializable {
     茶名
     */
     @Field("name")
-    private String usenamerName;
+    private String name;
     /*
-    性别
+    类型
      */
     @Field("type_id")
     private String typeId;
