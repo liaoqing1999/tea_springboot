@@ -1,7 +1,7 @@
 package com.qing.tea.controller;
 
 import com.google.code.kaptcha.Producer;
-import com.qing.tea.service.impl.TeaServiceImpl;
+import com.qing.tea.service.TeaService;
 import com.qing.tea.utils.R;
 import com.qing.tea.utils.VerifyUtil;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +21,7 @@ import java.io.OutputStream;
 @RequestMapping("tea")
 public class TeaController {
     @Resource
-    private TeaServiceImpl teaService;
+    private TeaService teaService;
     @Resource
     private Producer kaptchaProducer;
     @RequestMapping("getAll")

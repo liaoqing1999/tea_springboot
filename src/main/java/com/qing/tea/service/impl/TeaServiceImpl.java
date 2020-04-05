@@ -51,8 +51,7 @@ public class TeaServiceImpl implements TeaService {
     @Override
     public List<Tea> findByCond(String name, String value) {
         Query query=new Query(Criteria.where(name).is(value));
-        List<Tea> teas = mongoTemplate.find(query, Tea.class);
-        return teas;
+        return mongoTemplate.find(query, Tea.class);
     }
 
     @Override
@@ -71,9 +70,7 @@ public class TeaServiceImpl implements TeaService {
     }
     @Override
     public long getCount() {
-        Query query = new Query();
-        long count = mongoTemplate.count(query, Tea.class);
-        return count;
+        return mongoTemplate.count(new Query(), Tea.class);
     }
 
 }
