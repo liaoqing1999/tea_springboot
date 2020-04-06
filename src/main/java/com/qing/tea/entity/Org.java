@@ -1,0 +1,93 @@
+package com.qing.tea.entity;
+
+import lombok.Data;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+@Data
+@Document(collection = "org")
+public class Org {
+    /*
+   机构id：
+   */
+    @Field("_id")
+    private String id;
+
+    /*
+  机构名：
+  */
+    @Field("name")
+    private String name;
+
+    /*
+ 机构法人：
+ */
+    @Field("corporation")
+    private String corporation;
+
+    /*
+机构电话：
+*/
+    @Field("phone")
+    private String phone;
+
+    /*
+机构描述信息：
+*/
+    @Field("description")
+    private String description;
+
+    /*
+机构生产许可证编号：
+*/
+    @Field("license")
+    private String license;
+
+    /*
+营业执照：
+*/
+    @Field("permit")
+    private String[] permit;
+
+    /*
+组织机构代码证：
+*/
+    @Field("codePermit")
+    private String[] codePermit;
+
+    /*
+邮箱：
+*/
+    @Field("email")
+    private String email;
+
+    /*
+地点：
+*/
+    @Field("place")
+    private String place;
+
+    /*
+地点：
+*/
+    @Field("remark")
+    private String remark;
+
+    /*
+管理员id：
+*/
+    @Field("admin")
+    private String admin;
+
+    /*
+产品：
+*/
+    @Field("produce")
+    private String produce;
+
+    /*
+状态：
+*/
+    @Field("state")
+    private String state;
+}
