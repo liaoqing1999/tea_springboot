@@ -6,7 +6,7 @@ import java.util.List;
 public interface StaffService {
     public long getCount() ;
 
-    public void insert(Staff staff);
+    public Staff insert(Staff staff);
 
     public void delete(String id);
 

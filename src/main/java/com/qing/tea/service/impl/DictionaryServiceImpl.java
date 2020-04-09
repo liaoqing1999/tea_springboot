@@ -17,8 +17,9 @@ public class DictionaryServiceImpl implements DictionaryService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void insert(Dictionary dictionary) {
+    public Dictionary insert(Dictionary dictionary) {
         mongoTemplate.insert(dictionary);
+        return dictionary;
     }
 
     @Override
@@ -36,9 +37,7 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Override
     public Dictionary find(String id) {
-        Query query=new Query(Criteria.where("id").is(id));
-        List<Dictionary> teas = mongoTemplate.find(query, Dictionary.class);
-        return teas.get(0);
+        return mongoTemplate.findById(id,Dictionary.class);
     }
 
     @Override

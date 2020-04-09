@@ -152,8 +152,8 @@ public class QRCodeUtil {
 
     public static void main(String[] args) throws Exception {
         // 扫描二维码跳转的页面
-        String text = "https://www.baidu.com";
-        String name = "asdfasdfasd";
+        String text = "溯源码为：5e7f52b6790e9318bc605d80";
+        String name = "5e7f52b6790e9318bc605d80";
         // 图片位置以及存放二维码的路径
         QRCodeUtil.encode(name,text, "D:/download/mi/11.jpg", "D:/download/mi", true);
     }

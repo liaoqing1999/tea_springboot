@@ -19,8 +19,9 @@ public class TeaServiceImpl implements TeaService {
     private MongoTemplate mongoTemplate;
 
     @Override
-    public void insert(Tea tea) {
+    public Tea insert(Tea tea) {
         mongoTemplate.insert(tea);
+        return tea;
     }
 
     @Override
@@ -38,9 +39,7 @@ public class TeaServiceImpl implements TeaService {
 
     @Override
     public Tea find(String id) {
-        Query query=new Query(Criteria.where("id").is(id));
-        List<Tea> teas = mongoTemplate.find(query, Tea.class);
-        return teas.get(0);
+        return mongoTemplate.findById(id,Tea.class);
     }
 
     @Override

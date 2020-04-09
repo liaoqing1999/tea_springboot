@@ -1,6 +1,7 @@
 package com.qing.tea.entity;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -10,7 +11,7 @@ public class Org {
     /*
    机构id：
    */
-    @Field("_id")
+    @Id
     private String id;
 
     /*
@@ -24,7 +25,11 @@ public class Org {
  */
     @Field("corporation")
     private String corporation;
-
+    /*
+ 机构图标：
+ */
+    @Field("trademark")
+    private String trademark;
     /*
 机构电话：
 */

@@ -23,8 +23,9 @@ public class OrgServiceImpl implements OrgService {
     }
 
     @Override
-    public void insert(Org org) {
+    public Org insert(Org org) {
         mongoTemplate.insert(org);
+        return org;
     }
 
     @Override
@@ -42,9 +43,7 @@ public class OrgServiceImpl implements OrgService {
 
     @Override
     public Org find(String id) {
-        Query query=new Query(Criteria.where("id").is(id));
-        List<Org> teas = mongoTemplate.find(query, Org.class);
-        return teas.get(0);
+        return mongoTemplate.findById(id,Org.class);
     }
 
     @Override

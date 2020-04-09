@@ -1,9 +1,8 @@
 package com.qing.tea.service.impl;
 
-import com.qing.tea.entity.Dictionary;
-import com.qing.tea.entity.Org;
 import com.qing.tea.entity.Staff;
 import com.qing.tea.service.StaffService;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -24,8 +23,8 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public void insert(Staff staff) {
-        mongoTemplate.insert(staff);
+    public Staff insert(Staff staff) {
+        return mongoTemplate.insert(staff);
     }
 
     @Override
@@ -43,9 +42,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public Staff find(String id) {
-        Query query=new Query(Criteria.where("id").is(id));
-        List<Staff> teas = mongoTemplate.find(query, Staff.class);
-        return teas.get(0);
+        return  mongoTemplate.findById(id, Staff.class);
     }
 
     @Override

@@ -6,7 +6,7 @@ import java.util.List;
 public interface OrgService {
     public long getCount() ;
 
-    public void insert(Org org);
+    public Org insert(Org org);
 
     public void delete(String id);
 

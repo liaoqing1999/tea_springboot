@@ -7,7 +7,7 @@ import java.util.List;
 public interface TeaService {
     public long getCount() ;
 
-    public void insert(Tea tea);
+    public Tea insert(Tea tea);
 
     public void delete(String id);
 

@@ -7,7 +7,7 @@ import java.util.List;
 public interface DictionaryService {
     public long getCount() ;
 
-    public void insert(Dictionary dictionary);
+    public Dictionary insert(Dictionary dictionary);
 
     public void delete(String id);
 
