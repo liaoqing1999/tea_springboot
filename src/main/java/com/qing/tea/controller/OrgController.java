@@ -28,10 +28,9 @@ public class OrgController {
         staffService.update(staff.getId(),"org",org.getId());
         return R.success("success");
     }
-    @RequestMapping("test")
+    @RequestMapping("/getOrg")
     @ResponseBody
-    public R test(){
-        staffService.find("5e80a353790e9318bc605db4");
-        return R.success("");
+    public R getOrg(@RequestParam(name = "id")String id){
+        return R.success(orgService.find(id));
     }
 }

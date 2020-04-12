@@ -18,7 +18,11 @@ public class Staff {
 */
     @Field("name")
     private String name;
-
+    /*
+邮箱：
+*/
+    @Field("email")
+    private String email;
     /*
 用户密码：
 */
@@ -53,5 +57,21 @@ public class Staff {
     @Field("org")
     private String org;
 
+    /*
+头像图片：
+*/
+    @Field("img")
+    private String img;
 
+    /*
+状态：
+*/
+    @Field("state")
+    private String state;
+
+    /*
+创建时间：
+*/
+    @Field("create_time")
+    private String createTime;
 }
