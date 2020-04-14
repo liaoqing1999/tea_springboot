@@ -10,7 +10,7 @@ public interface StaffService {
 
     public void delete(String id);
 
-    public void update(String id,String name,String value);
+    public void update(String id,String name,Object value);
 
     public Staff find(String id);
 

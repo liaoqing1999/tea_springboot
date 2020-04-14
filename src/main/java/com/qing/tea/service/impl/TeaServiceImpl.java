@@ -31,7 +31,7 @@ public class TeaServiceImpl implements TeaService {
     }
 
     @Override
-    public void update(String id,String name,String value) {
+    public void update(String id,String name,Object value) {
         Query query=new Query(Criteria.where("_id").is(id));
         Update update = Update.update(name, value);
         mongoTemplate.updateFirst(query, update, Tea.class);
@@ -63,8 +63,10 @@ public class TeaServiceImpl implements TeaService {
 
     @Override
     public List<Tea> findList(int page, int rows) {
+        page = page>=0?page:1;
+        rows = rows>=0?rows:10;
         Query query = new Query();
-        query.skip(page*rows).limit(rows);
+        query.skip((page-1)*rows).limit(rows);
         return mongoTemplate.find(query, Tea.class);
     }
     @Override

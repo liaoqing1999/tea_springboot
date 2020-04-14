@@ -11,7 +11,7 @@ public interface DictionaryService {
 
     public void delete(String id);
 
-    public void update(String id,String name,String value);
+    public void update(String id,String name,Object value);
 
     public Dictionary find(String id);
 
