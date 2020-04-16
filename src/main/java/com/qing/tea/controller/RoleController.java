@@ -42,7 +42,11 @@ public class RoleController {
     public R<List<Role>> findByName(@RequestParam(name = "name")String  name){
         return R.success(roleService.findByCond("name",name));
     }
-
+    @RequestMapping("find")
+    @ResponseBody
+    public R<Role> find(@RequestParam(name = "id")String  id){
+        return R.success(roleService.find(id));
+    }
     @RequestMapping("update")
     @ResponseBody
     public R<Role> updateRole(@RequestBody Role  role){
