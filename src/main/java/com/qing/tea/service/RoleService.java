@@ -1,10 +1,11 @@
 package com.qing.tea.service;
 import com.qing.tea.entity.Role;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
 
 public interface RoleService {
-    public long getCount() ;
+    public long getCount(Criteria criteria) ;
 
     public Role insert(Role role);
 
@@ -20,7 +21,7 @@ public interface RoleService {
 
     public List<Role> findLike(String name,String searchKey );
 
-    public List<Role> findList(int page,int rows);
+    public List<Role> findList(int page, int rows, Criteria criteria);
 
 
 }

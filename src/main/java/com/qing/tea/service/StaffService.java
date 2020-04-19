@@ -1,10 +1,11 @@
 package com.qing.tea.service;
 import com.qing.tea.entity.Staff;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
 
 public interface StaffService {
-    public long getCount() ;
+    public long getCount(Criteria criteria) ;
 
     public Staff insert(Staff staff);
 
@@ -20,7 +21,7 @@ public interface StaffService {
 
     public List<Staff> findLike(String name,String searchKey );
 
-    public List<Staff> findList(int page,int rows);
+    public List<Staff> findList(int page, int rows, Criteria criteria);
 
 
 }

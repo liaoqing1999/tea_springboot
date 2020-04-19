@@ -1,11 +1,12 @@
 package com.qing.tea.service;
 
 import com.qing.tea.entity.Dictionary;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
 
 public interface DictionaryService {
-    public long getCount() ;
+    public long getCount(Criteria criteria) ;
 
     public Dictionary insert(Dictionary dictionary);
 
@@ -21,7 +22,7 @@ public interface DictionaryService {
 
     public List<Dictionary> findLike(String name,String searchKey );
 
-    public List<Dictionary> findList(int page,int rows);
+    public List<Dictionary> findList(int page, int rows, Criteria criteria);
 
     public List<Dictionary> findByCodeValue(String typeCode,String valueId);
 }

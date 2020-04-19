@@ -3,10 +3,10 @@ package com.qing.tea.controller;
 import com.qing.tea.entity.Role;
 import com.qing.tea.service.RoleService;
 import com.qing.tea.utils.R;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,11 +19,8 @@ public class RoleController {
     @RequestMapping("getPage")
     @ResponseBody
     public R getRolePage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows){
-        Map<String,Object> result =new HashMap<String,Object>();
-        result.put("content",roleService.findList(page,rows));
-        result.put("total",roleService.getCount());
-        result.put("page",page);
-        result.put("rows",rows);
+        List<Role> list = roleService.findList(page, rows, new Criteria());
+        Map<String, Object> result = MapReuslt.mapPage(list, roleService.getCount(new Criteria()), page, rows);
         return R.success(result);
     }
 

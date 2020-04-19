@@ -1,11 +1,12 @@
 package com.qing.tea.service;
 
 import com.qing.tea.entity.Tea;
+import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
 
 public interface TeaService {
-    public long getCount() ;
+    public long getCount(Criteria criteria) ;
 
     public Tea insert(Tea tea);
 
@@ -21,5 +22,5 @@ public interface TeaService {
 
     public List<Tea> findLike(String name,String searchKey );
 
-    public List<Tea> findList(int page,int rows);
+    public List<Tea> findList(int page, int rows, Criteria criteria);
 }

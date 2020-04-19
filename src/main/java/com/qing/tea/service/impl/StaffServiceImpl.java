@@ -18,8 +18,8 @@ public class StaffServiceImpl implements StaffService {
     @Resource
     private MongoTemplate mongoTemplate;
     @Override
-    public long getCount() {
-        return mongoTemplate.count(new Query(), Staff.class);
+    public long getCount(Criteria criteria) {
+        return mongoTemplate.count(new Query(criteria), Staff.class);
     }
 
     @Override
@@ -59,16 +59,16 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public List<Staff> findLike(String name, String searchKey) {
         Pattern pattern = Pattern.compile("^.*" + searchKey + ".*$");//这里时使用的是正则匹配,searchKey是关键字，接口传参，也可以自己定义。
-        Criteria criteria = Criteria.where("_id").regex(pattern);
+        Criteria criteria = Criteria.where(name).regex(pattern);
         Query query = new Query(criteria);
         return mongoTemplate.find(query, Staff.class);
     }
 
     @Override
-    public List<Staff> findList(int page, int rows) {
+    public List<Staff> findList(int page, int rows,Criteria criteria) {
         page = page>=0?page:1;
         rows = rows>=0?rows:10;
-        Query query = new Query();
+        Query query = new Query(criteria);
         query.skip((page-1)*rows).limit(rows);
         return mongoTemplate.find(query, Staff.class);
     }
