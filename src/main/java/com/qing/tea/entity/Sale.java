@@ -30,4 +30,10 @@ public class Sale {
       */
     @Field("saleer")
     private String saleer;
+
+    /*
+状态：
+*/
+    @Field("isFinish")
+    private Boolean isFinish;
 }

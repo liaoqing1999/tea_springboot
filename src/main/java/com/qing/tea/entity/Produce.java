@@ -87,4 +87,9 @@ public class Produce {
     @Field("check")
     private Check[] check;
 
+    /*
+状态：
+*/
+    @Field("isFinish")
+    private Boolean isFinish;
 }

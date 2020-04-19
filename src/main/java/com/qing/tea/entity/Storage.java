@@ -36,4 +36,10 @@ public class Storage {
  */
     @Field("img")
     private String[] img;
+
+    /*
+状态：
+*/
+    @Field("isFinish")
+    private Boolean isFinish;
 }
