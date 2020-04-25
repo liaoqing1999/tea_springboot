@@ -83,4 +83,10 @@ public class Tea implements Serializable {
     */
     @Field("sale")
     private Sale sale;
+
+    /*
+       所属产品
+  */
+    @Field("produce")
+    private String produce;
 }

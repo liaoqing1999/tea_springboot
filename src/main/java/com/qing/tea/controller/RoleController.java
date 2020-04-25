@@ -37,7 +37,8 @@ public class RoleController {
     @RequestMapping("findByName")
     @ResponseBody
     public R<List<Role>> findByName(@RequestParam(name = "name")String  name){
-        return R.success(roleService.findByCond("name",name));
+        Criteria criteria = Criteria.where("name").is(name);
+        return R.success(roleService.findByCond(criteria));
     }
     @RequestMapping("find")
     @ResponseBody

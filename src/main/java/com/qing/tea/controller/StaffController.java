@@ -3,6 +3,7 @@ package com.qing.tea.controller;
 import com.qing.tea.entity.Staff;
 import com.qing.tea.service.StaffService;
 import com.qing.tea.utils.R;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,7 +18,8 @@ public class StaffController {
     @RequestMapping("login")
     @ResponseBody
     public R login(@RequestParam(name = "name")String name, @RequestParam(name = "password")String password){
-        List<Staff> staffList = staffService.findByCond("name", name);
+        Criteria criteria = Criteria.where("name").is(name);
+        List<Staff> staffList = staffService.findByCond(criteria);
         String msg = "";
         if(staffList.size()>0){
             Staff staff = staffList.get(0);

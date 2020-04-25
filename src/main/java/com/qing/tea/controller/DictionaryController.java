@@ -22,8 +22,7 @@ public class DictionaryController {
 
     @RequestMapping("getByCond")
     @ResponseBody
-    public R getByCond(@RequestParam(name = "typeCode")String typeCode, @RequestParam(name = "valueId")String valueId){
-
+    public R getByCond(@RequestParam(name = "typeCode")String typeCode, @RequestParam(required =false,defaultValue="",name = "valueId")String valueId){
         return R.success( dictionaryService.findByCodeValue(typeCode,valueId));
     }
 }

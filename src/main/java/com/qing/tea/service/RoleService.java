@@ -17,7 +17,7 @@ public interface RoleService {
 
     public List<Role> findAll();
 
-    public List<Role> findByCond(String name,String value);
+    public List<Role> findByCond(Criteria criteria);
 
     public List<Role> findLike(String name,String searchKey );
 

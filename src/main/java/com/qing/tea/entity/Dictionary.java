@@ -37,4 +37,10 @@ public class Dictionary {
     */
     @Field("value_name")
     private String valueName;
+
+    /*
+状态：
+*/
+    @Field("state")
+    private String state;
 }

@@ -18,7 +18,7 @@ public interface TeaService {
 
     public List<Tea> findAll();
 
-    public List<Tea> findByCond(String name,String value);
+    public List<Tea> findByCond(Criteria criteria);
 
     public List<Tea> findLike(String name,String searchKey );
 

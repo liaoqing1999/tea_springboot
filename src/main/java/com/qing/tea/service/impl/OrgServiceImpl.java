@@ -50,8 +50,8 @@ public class OrgServiceImpl implements OrgService {
     }
 
     @Override
-    public List<Org> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Org> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Org.class);
     }
 

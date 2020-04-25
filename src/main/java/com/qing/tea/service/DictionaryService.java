@@ -18,7 +18,7 @@ public interface DictionaryService {
 
     public List<Dictionary> findAll();
 
-    public List<Dictionary> findByCond(String name,String value);
+    public List<Dictionary> findByCond(Criteria criteria);
 
     public List<Dictionary> findLike(String name,String searchKey );
 

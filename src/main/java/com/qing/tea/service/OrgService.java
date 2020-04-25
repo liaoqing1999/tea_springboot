@@ -17,7 +17,7 @@ public interface OrgService {
 
     public List<Org> findAll();
 
-    public List<Org> findByCond(String name,String value);
+    public List<Org> findByCond(Criteria criteria);
 
     public List<Org> findLike(String name,String searchKey );
 

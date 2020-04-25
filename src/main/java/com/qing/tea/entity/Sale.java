@@ -35,5 +35,5 @@ public class Sale {
 状态：
 */
     @Field("isFinish")
-    private Boolean isFinish;
+    private boolean isFinish;
 }

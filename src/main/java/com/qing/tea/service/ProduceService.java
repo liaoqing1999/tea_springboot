@@ -18,7 +18,7 @@ public interface ProduceService {
 
     public List<Produce> findAll();
 
-    public List<Produce> findByCond(String name,String value);
+    public List<Produce> findByCond(Criteria criteria);
 
     public List<Produce> findLike(String name,String searchKey );
 

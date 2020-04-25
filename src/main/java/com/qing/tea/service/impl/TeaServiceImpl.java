@@ -48,8 +48,8 @@ public class TeaServiceImpl implements TeaService {
     }
 
     @Override
-    public List<Tea> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Tea> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Tea.class);
     }
 

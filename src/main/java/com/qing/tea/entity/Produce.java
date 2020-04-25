@@ -91,5 +91,5 @@ public class Produce {
 状态：
 */
     @Field("isFinish")
-    private Boolean isFinish;
+    private boolean isFinish;
 }

@@ -51,8 +51,8 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Staff> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Staff> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Staff.class);
     }
 

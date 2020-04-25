@@ -41,5 +41,5 @@ public class Process {
 状态：
 */
     @Field("isFinish")
-    private Boolean isFinish;
+    private boolean isFinish;
 }

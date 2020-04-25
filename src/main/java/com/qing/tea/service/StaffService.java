@@ -17,7 +17,7 @@ public interface StaffService {
 
     public List<Staff> findAll();
 
-    public List<Staff> findByCond(String name,String value);
+    public List<Staff> findByCond(Criteria criteria);
 
     public List<Staff> findLike(String name,String searchKey );
 

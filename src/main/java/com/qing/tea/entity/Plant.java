@@ -33,5 +33,5 @@ public class Plant {
 状态：
 */
     @Field("isFinish")
-    private Boolean isFinish;
+    private boolean isFinish;
 }

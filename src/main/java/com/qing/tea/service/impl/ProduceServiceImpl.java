@@ -50,8 +50,8 @@ public class ProduceServiceImpl implements ProduceService {
     }
 
     @Override
-    public List<Produce> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Produce> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Produce.class);
     }
 

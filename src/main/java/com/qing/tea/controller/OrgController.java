@@ -40,10 +40,10 @@ public class OrgController {
 
     @RequestMapping("getPage")
     @ResponseBody
-    public R getRolePage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,defaultValue="",name = "place")String place){
+    public R getOrgPage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,defaultValue="",name = "place")String place){
         Pattern pattern = Pattern.compile("^.*" + place + ".*$");
         Criteria criteria = Criteria.where("place").regex(pattern);
-        criteria.andOperator( Criteria.where("state").is("2"));
+        criteria.and("state").is("2");
         List<Org> list = orgService.findList(page, rows, criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, orgService.getCount(criteria), page, rows);
         return R.success(result);

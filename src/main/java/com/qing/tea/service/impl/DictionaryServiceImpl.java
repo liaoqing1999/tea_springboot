@@ -46,8 +46,8 @@ public class DictionaryServiceImpl implements DictionaryService {
     }
 
     @Override
-    public List<Dictionary> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Dictionary> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Dictionary.class);
     }
 
@@ -71,7 +71,8 @@ public class DictionaryServiceImpl implements DictionaryService {
     @Override
     public List<Dictionary> findByCodeValue(String typeCode, String valueId) {
         Criteria criteria = Criteria.where("type_code").is(typeCode);
-        criteria.and("value_id").is(valueId);
+        if(valueId!=null&&!valueId.equals("")) criteria.and("value_id").is(valueId);
+        criteria.and("state").is("2");
         Query query = new Query(criteria);
         return  mongoTemplate.find(query, Dictionary.class);
     }

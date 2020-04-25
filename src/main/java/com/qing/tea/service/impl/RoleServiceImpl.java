@@ -52,8 +52,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public List<Role> findByCond(String name, String value) {
-        Query query=new Query(Criteria.where(name).is(value));
+    public List<Role> findByCond(Criteria criteria) {
+        Query query=new Query(criteria);
         return mongoTemplate.find(query, Role.class);
     }
 
