@@ -40,6 +40,6 @@ public class Storage {
     /*
 状态：
 */
-    @Field("isFinish")
-    private boolean isFinish;
+    @Field("finish")
+    private boolean finish;
 }

@@ -79,6 +79,16 @@ public class Org {
     private String remark;
 
     /*
+   产地：
+*/
+    @Field("place_origin")
+    private String[] placeOrigin;
+    /*
+仓库：
+*/
+    @Field("warehouse")
+    private String[] warehouse;
+    /*
 管理员id：
 */
     @Field("admin")
@@ -88,8 +98,12 @@ public class Org {
 产品：
 */
     @Field("produce")
-    private String produce;
-
+    private String[] produce;
+    /*
+是否允许非管理员新建产品：
+*/
+    @Field("staff_produce")
+    private boolean staffProduce;
     /*
 状态：
 */

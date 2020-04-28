@@ -34,4 +34,10 @@ public class Check {
       */
     @Field("checker")
     private String checker;
+
+    /*
+状态：
+*/
+    @Field("finish")
+    private boolean finish;
 }
