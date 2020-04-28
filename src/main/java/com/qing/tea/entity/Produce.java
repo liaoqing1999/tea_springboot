@@ -59,37 +59,8 @@ public class Produce {
     @Field("reserve")
     private String reserve;
     /*
-        规格
-    */
-    @Field("specs")
-    private String specs;
-    /*
-        种植阶段
-    */
-    @Field("plant")
-    private Plant plant;
-
-    /*
-        加工阶段
-    */
-    @Field("process")
-    private Process[] process;
-
-    /*
-        仓储阶段
-    */
-    @Field("storage")
-    private Storage storage;
-
-    /*
-        仓储阶段
-    */
-    @Field("check")
-    private Check[] check;
-
-    /*
 状态：
 */
-    @Field("isFinish")
-    private boolean isFinish;
+    @Field("state")
+    private String state;
 }

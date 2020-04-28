@@ -73,17 +73,10 @@ public class Tea implements Serializable {
     private Storage storage;
 
     /*
-        仓储阶段
+        检测阶段
     */
     @Field("check")
     private Check[] check;
-
-    /*
-        销售阶段
-    */
-    @Field("sale")
-    private Sale sale;
-
     /*
        所属产品
   */
