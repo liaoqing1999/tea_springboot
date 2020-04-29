@@ -67,6 +67,12 @@ public class Tea implements Serializable {
     private Process[] process;
 
     /*
+        是否完成加工阶段
+    */
+    @Field("process_finish")
+    private boolean processFinish;
+
+    /*
         仓储阶段
     */
     @Field("storage")
@@ -77,6 +83,12 @@ public class Tea implements Serializable {
     */
     @Field("check")
     private Check[] check;
+
+    /*
+       是否完成检测阶段
+   */
+    @Field("check_finish")
+    private boolean checkFinish;
     /*
        所属产品
   */
