@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -15,6 +16,8 @@ import java.util.regex.Pattern;
 public class OrgServiceImpl implements OrgService {
     @Resource
     private MongoTemplate mongoTemplate;
+
+
     @Override
     public long getCount(Criteria criteria) {
         return mongoTemplate.count(new Query(criteria), Org.class);
@@ -36,6 +39,25 @@ public class OrgServiceImpl implements OrgService {
     public void update(String id, String name, Object value) {
         Query query=new Query(Criteria.where("_id").is(id));
         Update update = Update.update(name, value);
+        mongoTemplate.updateFirst(query, update, Org.class);
+    }
+    @Override
+    public void update(String id, Org org) {
+        Query query=new Query(Criteria.where("_id").is(id));
+        Update update = new Update();
+        Field[] declaredFields = org.getClass().getDeclaredFields();
+        for (Field field : declaredFields) {
+            String key = field.getName();
+            Object value = new Object();
+            try {
+                value = field.get(org);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+            update.set(key, value);
+        }
         mongoTemplate.updateFirst(query, update, Org.class);
     }
 

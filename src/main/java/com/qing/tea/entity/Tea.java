@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 @Document(collection = "tea")
@@ -64,7 +65,7 @@ public class Tea implements Serializable {
         加工阶段
     */
     @Field("process")
-    private Process[] process;
+    private List<Process> process;
 
     /*
         是否完成加工阶段
@@ -82,7 +83,7 @@ public class Tea implements Serializable {
         检测阶段
     */
     @Field("check")
-    private Check[] check;
+    private List<Check> check;
 
     /*
        是否完成检测阶段

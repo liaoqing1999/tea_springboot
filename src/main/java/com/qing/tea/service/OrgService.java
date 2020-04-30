@@ -13,6 +13,8 @@ public interface OrgService {
 
     public void update(String id,String name,Object value);
 
+    public void update(String id,Org org);
+
     public Org find(String id);
 
     public List<Org> findAll();
