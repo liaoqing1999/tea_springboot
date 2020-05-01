@@ -13,5 +13,13 @@ public class Node {
 
     private Object data;
 
-    private List<Object> children;
+    private boolean disabled;
+
+    private boolean isLeaf;
+
+    private boolean checkable;
+
+    private boolean disableCheckbox;
+
+    private List<Node> children;
 }
