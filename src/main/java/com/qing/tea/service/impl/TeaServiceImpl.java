@@ -2,6 +2,7 @@ package com.qing.tea.service.impl;
 
 import com.qing.tea.entity.Tea;
 import com.qing.tea.service.TeaService;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -9,6 +10,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -67,7 +69,7 @@ public class TeaServiceImpl implements TeaService {
         rows = rows>=0?rows:10;
         Query query = new Query(criteria);
         query.skip((page-1)*rows).limit(rows);
-        return mongoTemplate.find(query, Tea.class);
+        return mongoTemplate.find(query.with(Sort.by("batch")), Tea.class);
     }
     @Override
     public long getCount(Criteria criteria) {
