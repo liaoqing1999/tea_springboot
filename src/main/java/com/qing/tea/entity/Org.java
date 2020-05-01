@@ -73,32 +73,15 @@ public class Org {
     private String place;
 
     /*
-地点：
+备注：
 */
     @Field("remark")
     private String remark;
-
-    /*
-   产地：
-*/
-    @Field("place_origin")
-    private String[] placeOrigin;
-    /*
-仓库：
-*/
-    @Field("warehouse")
-    private String[] warehouse;
     /*
 管理员id：
 */
     @Field("admin")
     private String admin;
-
-    /*
-产品：
-*/
-    @Field("produce")
-    private String[] produce;
     /*
 是否允许非管理员新建产品：
 */
