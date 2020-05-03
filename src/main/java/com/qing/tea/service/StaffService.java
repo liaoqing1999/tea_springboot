@@ -3,6 +3,7 @@ import com.qing.tea.entity.Staff;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
+import java.util.Map;
 
 public interface StaffService {
     public long getCount(Criteria criteria) ;
@@ -21,7 +22,7 @@ public interface StaffService {
 
     public List<Staff> findLike(String name,String searchKey );
 
-    public List<Staff> findList(int page, int rows, Criteria criteria);
+    public List<Map> findList(int page, int rows, Criteria criteria);
 
 
 }

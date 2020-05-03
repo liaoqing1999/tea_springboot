@@ -1,6 +1,7 @@
 package com.qing.tea.entity;
 
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -34,7 +35,7 @@ public class Staff {
     /*
 用户密码：
 */
-    @Field("real_name")
+    @Field("realName")
     private String realName;
 
     /*
@@ -53,12 +54,23 @@ public class Staff {
 */
     @Field("work")
     private String work;
-    /*
-机构id：
-*/
-    @Field("org")
-    private String org;
 
+    /*
+    机构id：
+    */
+    @Field("org")
+    private ObjectId org;
+
+    public String getOrg() {
+        if(org!=null){
+            return org.toString();
+        }
+        return null;
+    }
+
+    public void setOrg(String org) {
+        this.org =new ObjectId(org) ;
+    }
     /*
 头像图片：
 */
@@ -74,12 +86,21 @@ public class Staff {
     /*
 创建时间：
 */
-    @Field("create_time")
+    @Field("createTime")
     private Date createTime;
 
     /*
 角色：
 */
     @Field("role")
-    private String role;
+    private ObjectId role;
+
+
+    public String getRole() {
+        return role.toString();
+    }
+
+    public void setRole(String role) {
+        this.role = new ObjectId(role);
+    }
 }

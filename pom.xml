@@ -51,6 +51,12 @@
             <artifactId>oshi-core</artifactId>
             <version>3.9.1</version>
         </dependency>
+        <!--Json-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

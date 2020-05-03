@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +40,19 @@ public class RoleController {
     public R<List<Role>> findByName(@RequestParam(name = "name")String  name){
         Criteria criteria = Criteria.where("name").is(name);
         return R.success(roleService.findByCond(criteria));
+    }
+    @RequestMapping("getAll")
+    @ResponseBody
+    public R<List<Role>> getRoleAll(){
+        Criteria criteria =new Criteria();
+        List<Role> roles = roleService.findByCond(criteria);
+        List<Role> result = new ArrayList<Role>();
+        for(Role role:roles){
+            if(!role.getName().equals("superAdmin")){
+                result.add(role);
+            }
+        }
+        return R.success(result);
     }
     @RequestMapping("find")
     @ResponseBody
