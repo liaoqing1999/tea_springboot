@@ -78,11 +78,6 @@ public class Org {
     @Field("remark")
     private String remark;
     /*
-管理员id：
-*/
-    @Field("admin")
-    private String admin;
-    /*
 是否允许非管理员新建产品：
 */
     @Field("staff_produce")

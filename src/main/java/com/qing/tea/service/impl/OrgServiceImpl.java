@@ -42,12 +42,15 @@ public class OrgServiceImpl implements OrgService {
         mongoTemplate.updateFirst(query, update, Org.class);
     }
     @Override
-    public void update(String id, Org org) {
-        Query query=new Query(Criteria.where("_id").is(id));
+    public void update(Org org) {
+        Query query=new Query(Criteria.where("_id").is(org.getId()));
         Update update = new Update();
         Field[] declaredFields = org.getClass().getDeclaredFields();
         for (Field field : declaredFields) {
             String key = field.getName();
+            boolean accessFlag = field.isAccessible();
+            // 修改访问控制权限
+            field.setAccessible(true);
             Object value = new Object();
             try {
                 value = field.get(org);
@@ -56,6 +59,7 @@ public class OrgServiceImpl implements OrgService {
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
+            field.setAccessible(accessFlag);
             update.set(key, value);
         }
         mongoTemplate.updateFirst(query, update, Org.class);
