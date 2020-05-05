@@ -1,14 +1,13 @@
 package com.qing.tea.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.Dictionary;
 import com.qing.tea.service.DictionaryService;
 import com.qing.tea.utils.Node;
 import com.qing.tea.utils.R;
 import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -31,11 +30,31 @@ public class DictionaryController {
 
     @RequestMapping("getByCond")
     @ResponseBody
-    public R getByCond(@RequestParam(name = "typeCode") String typeCode, @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
-        return R.success(dictionaryService.findByCodeValue(typeCode, valueId));
+    public R getByCond(@RequestParam(name = "typeCode") String typeCode,
+                       @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
+        return R.success(dictionaryService.findByCodeValue(typeCode, valueId,"2"));
     }
-
-    @RequestMapping("getType")
+    @RequestMapping("name")
+    @ResponseBody
+    public R name(@RequestParam(name = "typeCode")String typeCode,@RequestParam(required = false,name = "valueId")String valueId){
+        Criteria criteria = Criteria.where("type_code").is(typeCode);
+        if(valueId!=null){
+            criteria.and("value_id").is(valueId);
+        }
+        List<Dictionary> dictionaryList = dictionaryService.findByCond(criteria);
+        String msg = "";
+        if(dictionaryList.size()>0){
+            if(valueId!=null){
+                msg ="字典名已存在";
+            }else{
+                msg ="字典类型名已存在";
+            }
+        }else{
+            msg ="";
+        }
+        return R.success(msg);
+    }
+    @RequestMapping("getTeaType")
     @ResponseBody
     public R getTeaType() {
         Criteria criteria = Criteria.where("type_code").is("type");
@@ -76,7 +95,62 @@ public class DictionaryController {
         }
         return R.success(result);
     }
+    @RequestMapping("getType")
+    @ResponseBody
+    public R getTypePage(@RequestParam(required =false,name = "cond")String cond){
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        if(parse!=null){
 
+        }
+        List<Map> list = dictionaryService.findTypeList(criteria);
+        return R.success(list);
+    }
+    @RequestMapping("get")
+    @ResponseBody
+    public R getPage(@RequestParam(name = "typeCode") String typeCode,
+                       @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
+        return R.success(dictionaryService.findByCodeValue(typeCode, valueId,null));
+    }
+    @RequestMapping("addType")
+    @ResponseBody
+    public R addType(@RequestBody Dictionary dictionary){
+        dictionary.setState("2");
+        dictionary.setValueId("0");
+        dictionary.setValueName("默认数据");
+        return R.success(dictionaryService.insert(dictionary));
+    }
+    @RequestMapping("add")
+    @ResponseBody
+    public R add(@RequestBody Dictionary dictionary){
+        return R.success(dictionaryService.insert(dictionary));
+    }
+    @RequestMapping("update")
+    @ResponseBody
+    public R update(@RequestBody Dictionary dictionary){
+        dictionaryService.update(dictionary);
+        return R.success(dictionaryService.find(dictionary.getId()));
+    }
+    @RequestMapping("updateType")
+    @ResponseBody
+    public R updateType(@RequestParam(name = "typeCode")String typeCode,@RequestParam(name = "typeName")String typeName){
+        Criteria criteria = Criteria.where("type_code").is(typeCode);
+        dictionaryService.updateAll(criteria,"type_name",typeName);
+        return R.success("success");
+    }
+    @RequestMapping("delete")
+    @ResponseBody
+    public R delete(@RequestParam(name = "id")String id){
+        dictionaryService.delete(id);
+        return R.success("success");
+    }
+    @RequestMapping("deleteType")
+    @ResponseBody
+    public R deleteType(@RequestParam(name = "typeCode")String typeCode){
+        Criteria criteria = Criteria.where("type_code").is(typeCode);
+        dictionaryService.delete(criteria);
+        return R.success("success");
+    }
     @RequestMapping("getByType")
     @ResponseBody
     public R getTypeValue(@RequestParam(name = "typeCodes") String[] typeCodes) {

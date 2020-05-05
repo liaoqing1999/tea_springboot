@@ -8,7 +8,6 @@ import com.qing.tea.service.OrgService;
 import com.qing.tea.service.RoleService;
 import com.qing.tea.service.StaffService;
 import com.qing.tea.utils.R;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,6 +49,7 @@ public class OrgController {
     public R add(@RequestBody Org org) {
         return R.success(orgService.insert(org));
     }
+
     @RequestMapping("update")
     @ResponseBody
     public R update(@RequestBody Org org) {
@@ -61,6 +61,13 @@ public class OrgController {
     public R getOrg(@RequestParam(name = "id") String id) {
         return R.success(orgService.find(id));
     }
+
+    @RequestMapping("delete")
+    @ResponseBody
+    public void delete(@RequestParam(name = "id")String  id){
+        orgService.delete(id);
+    }
+
     @RequestMapping("/auth")
     @ResponseBody
     public R getOrgAuth(@RequestParam(name = "id") String id,@RequestParam(name = "state",defaultValue = "2") String state) {

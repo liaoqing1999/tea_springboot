@@ -1,6 +1,7 @@
 package com.qing.tea.service.impl;
 import com.qing.tea.entity.Org;
 import com.qing.tea.service.OrgService;
+import com.qing.tea.utils.UpdateUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -44,24 +45,7 @@ public class OrgServiceImpl implements OrgService {
     @Override
     public void update(Org org) {
         Query query=new Query(Criteria.where("_id").is(org.getId()));
-        Update update = new Update();
-        Field[] declaredFields = org.getClass().getDeclaredFields();
-        for (Field field : declaredFields) {
-            String key = field.getName();
-            boolean accessFlag = field.isAccessible();
-            // 修改访问控制权限
-            field.setAccessible(true);
-            Object value = new Object();
-            try {
-                value = field.get(org);
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-            field.setAccessible(accessFlag);
-            update.set(key, value);
-        }
+        Update update = UpdateUtils.getUpdate(org);
         mongoTemplate.updateFirst(query, update, Org.class);
     }
 

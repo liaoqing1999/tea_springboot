@@ -71,6 +71,7 @@ public class StaffController {
     public R add(@RequestBody Staff staff) {
         return R.success(staffService.insert(staff));
     }
+
     @RequestMapping("delete")
     @ResponseBody
     public void delete(@RequestParam(name = "id")String  id){
