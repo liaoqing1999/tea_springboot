@@ -33,11 +33,6 @@ public class News {
     @Field("content")
     private String content;
     /*
- 机构名：
- */
-    @Field("name")
-    private String name;
-    /*
  类型：
  */
     @Field("type")
@@ -76,6 +71,12 @@ public class News {
 */
     @Field("org")
     private String org;
+
+    /*
+所属机构：
+*/
+    @Field("orgName")
+    private String orgName;
     /*
         发布时间
       */

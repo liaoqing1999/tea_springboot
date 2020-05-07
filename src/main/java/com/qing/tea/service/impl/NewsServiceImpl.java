@@ -3,6 +3,8 @@ import com.qing.tea.entity.News;
 import com.qing.tea.entity.Org;
 import com.qing.tea.service.NewsService;
 import com.qing.tea.service.OrgService;
+import com.qing.tea.utils.UpdateUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -42,6 +44,12 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public void update(News news) {
+        Query query=new Query(Criteria.where("_id").is(news.getId()));
+        Update update = UpdateUtils.getUpdate(news);
+        mongoTemplate.updateFirst(query, update, News.class);
+    }
+    @Override
     public News find(String id) {
         return mongoTemplate.findById(id,News.class);
     }
@@ -70,6 +78,7 @@ public class NewsServiceImpl implements NewsService {
         page = page>=0?page:1;
         rows = rows>=0?rows:10;
         Query query = new Query(criteria);
+        query.with(Sort.by(Sort.Direction.DESC,"_id"));
         query.skip((page-1)*rows).limit(rows);
         return mongoTemplate.find(query, News.class);
     }

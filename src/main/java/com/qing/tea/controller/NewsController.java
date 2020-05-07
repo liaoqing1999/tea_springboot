@@ -1,5 +1,8 @@
 package com.qing.tea.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.News;
 import com.qing.tea.entity.NewsDetail;
 import com.qing.tea.service.NewsService;
@@ -7,8 +10,12 @@ import com.qing.tea.utils.R;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 
 @RestController
@@ -25,24 +32,62 @@ public class NewsController {
 
     @RequestMapping("getPage")
     @ResponseBody
-    public R getRolePage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,defaultValue="",name = "type")String type){
+    public R getRolePage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,name = "cond")String cond){
         Criteria criteria = new Criteria();
-        if(!type.equals("")&&type!=null){
-            criteria.and("type").is(type);
+        JSONObject parse = JSON.parseObject(cond);
+        if(parse!=null) {
+            if (parse.get("type") != null) {
+                criteria.and("type").is(parse.get("type"));
+            }
+            if (parse.get("state") != null) {
+                criteria.and("state").is(parse.get("state"));
+            }
+            if (parse.get("date") != null) {
+                JSONArray date = (JSONArray) parse.get("date");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date startDate=formatter.parse(date.get(0).toString());
+                    Date endDate=formatter.parse(date.get(1).toString());
+                    criteria.and("date").gte(startDate).lte(endDate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
         List<News> list = newsService.findList(page, rows, criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, newsService.getCount(criteria), page, rows);
         return R.success(result);
     }
 
+    @RequestMapping("delete")
+    @ResponseBody
+    public R delete(@RequestParam(name = "id")String id){
+        newsService.delete(id);
+        return R.success("");
+    }
+
     @RequestMapping("updateUser")
     @ResponseBody
-    public R<News> updateRole(@RequestBody News  news){
+    public R<News> updateUser(@RequestBody News  news){
         News n = newsService.find(news.getId());
         newsService.update(news.getId(),"up",n.getUp()+news.getUp());
         newsService.update(news.getId(),"down",n.getDown()+news.getDown());
         newsService.update(news.getId(),"rate",(n.getRate()*n.getRateNum()+news.getRate())/(n.getRateNum()+news.getRateNum()));
         newsService.update(news.getId(),"rateNum",n.getRateNum()+news.getRateNum());
+        return R.success(newsService.find(news.getId()));
+    }
+
+    @RequestMapping("add")
+    @ResponseBody
+    public R<News> add(@RequestBody News  news){
+        return R.success(newsService.insert(news));
+    }
+
+    @RequestMapping("update")
+    @ResponseBody
+    public R<News> update(@RequestBody News  news){
+        newsService.update(news);
         return R.success(newsService.find(news.getId()));
     }
 }
