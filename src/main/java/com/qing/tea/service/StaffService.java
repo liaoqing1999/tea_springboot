@@ -14,6 +14,8 @@ public interface StaffService {
 
     public void update(String id,String name,Object value);
 
+    public void update(Staff staff);
+
     public Staff find(String id);
 
     public List<Staff> findAll();

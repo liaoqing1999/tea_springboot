@@ -21,6 +21,7 @@ public class Staff {
 */
     @Field("name")
     private String name;
+
     /*
 邮箱：
 */
@@ -33,10 +34,16 @@ public class Staff {
     private String password;
 
     /*
-用户密码：
+用户真实姓名：
 */
     @Field("realName")
     private String realName;
+
+    /*
+性别：
+*/
+    @Field("sex")
+    private String sex;
 
     /*
 手机号码：

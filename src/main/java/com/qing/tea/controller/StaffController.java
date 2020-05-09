@@ -54,16 +54,7 @@ public class StaffController {
     @RequestMapping("update")
     @ResponseBody
     public R update(@RequestBody Staff staff) {
-        staffService.update(staff.getId(),"name",staff.getName());
-        staffService.update(staff.getId(),"email",staff.getEmail());
-        staffService.update(staff.getId(),"real_name",staff.getRealName());
-        staffService.update(staff.getId(),"phone",staff.getPhone());
-        staffService.update(staff.getId(),"card",staff.getCard());
-        staffService.update(staff.getId(),"work",staff.getWork());
-        staffService.update(staff.getId(),"img",staff.getImg());
-        staffService.update(staff.getId(),"role",new ObjectId(staff.getRole()) );
-        staffService.update(staff.getId(),"org",new ObjectId(staff.getOrg()));
-        staffService.update(staff.getId(),"state",staff.getState());
+        staffService.update(staff);
         return R.success(staffService.find(staff.getId()));
     }
     @RequestMapping("add")

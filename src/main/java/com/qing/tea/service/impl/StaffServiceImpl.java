@@ -2,6 +2,7 @@ package com.qing.tea.service.impl;
 
 import com.qing.tea.entity.Staff;
 import com.qing.tea.service.StaffService;
+import com.qing.tea.utils.UpdateUtils;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -42,6 +43,13 @@ public class StaffServiceImpl implements StaffService {
     public void update(String id, String name, Object value) {
         Query query=new Query(Criteria.where("_id").is(id));
         Update update = Update.update(name, value);
+        mongoTemplate.updateFirst(query, update, Staff.class);
+    }
+
+    @Override
+    public void update(Staff staff) {
+        Query query=new Query(Criteria.where("_id").is(staff.getId()));
+        Update update = UpdateUtils.getUpdate(staff);
         mongoTemplate.updateFirst(query, update, Staff.class);
     }
 
@@ -92,8 +100,12 @@ public class StaffServiceImpl implements StaffService {
             if(map.get("org")!=null){
                 map.put("org",map.get("org").toString()) ;
             }
-            map.put("id",map.get("_id").toString()) ;
-            map.put("role",map.get("role").toString()) ;
+            if(map.get("_id")!=null){
+                map.put("id",map.get("_id").toString()) ;
+            }
+            if(map.get("role")!=null){
+                map.put("role",map.get("role").toString()) ;
+            }
         }
         return results;
     }
