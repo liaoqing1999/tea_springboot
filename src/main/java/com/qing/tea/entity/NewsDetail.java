@@ -1,6 +1,7 @@
 package com.qing.tea.entity;
 
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -20,13 +21,35 @@ public class NewsDetail {
     /*
   用户id：
   */
-    @Field("user_id")
-    private String userId;
+    @Field("user")
+    private ObjectId user;
+
+    public String getUser() {
+        if(user!=null){
+            return user.toString();
+        }
+        return null;
+    }
+
+    public void setUser(String user) {
+        this.user =new ObjectId(user) ;
+    }
     /*
  资讯id：
  */
-    @Field("news_id")
-    private String newsId;
+    @Field("news")
+    private ObjectId news;
+
+    public String getNews() {
+        if(news!=null){
+            return news.toString();
+        }
+        return null;
+    }
+
+    public void setNews(String news) {
+        this.news =new ObjectId(news) ;
+    }
     /*
         查看时间
       */

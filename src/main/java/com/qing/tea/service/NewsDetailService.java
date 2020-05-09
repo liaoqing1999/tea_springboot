@@ -3,6 +3,7 @@ import com.qing.tea.entity.NewsDetail;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NewsDetailService {
     public long getCount(Criteria criteria) ;
@@ -18,6 +19,8 @@ public interface NewsDetailService {
     public List<NewsDetail> findAll();
 
     public List<NewsDetail> findByCond(Criteria criteria);
+
+    public List<Map> findByNews(Criteria criteria);
 
     public List<NewsDetail> findLike(String name, String searchKey);
 

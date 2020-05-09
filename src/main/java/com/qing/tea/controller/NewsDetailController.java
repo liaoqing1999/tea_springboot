@@ -1,11 +1,14 @@
 package com.qing.tea.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.News;
 import com.qing.tea.entity.NewsDetail;
 import com.qing.tea.entity.Role;
 import com.qing.tea.service.NewsDetailService;
 import com.qing.tea.service.NewsService;
 import com.qing.tea.utils.R;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,9 +39,9 @@ public class NewsDetailController {
         if(newsDetails.size()==0){
             NewsDetail newsDetail = new NewsDetail();
             newsDetail.setDate(new Date());
-            newsDetail.setNewsId(newsId);
+            newsDetail.setNews(newsId);
             newsDetail.setState("2");
-            newsDetail.setUserId(userId);
+            newsDetail.setUser(userId);
             newsDetails.add(newsDetailService.insert(newsDetail));
             News news = newsService.find(newsId);
             newsService.update(newsId,"read",news.getRead()+1);
@@ -57,5 +60,21 @@ public class NewsDetailController {
         newsDetailService.update(newsDetail.getId(),"down",newsDetail.isDown());
         newsDetailService.update(newsDetail.getId(),"rate",newsDetail.getRate());
         return R.success(newsDetailService.find(newsDetail.getId()));
+    }
+
+    @RequestMapping("getByCond")
+    @ResponseBody
+    public R getListByCond(@RequestParam(required =false,name = "cond")String cond){
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        if(parse!=null) {
+            if (parse.get("news") != null) {
+                criteria.and("news").is(new ObjectId((String) parse.get("news")));
+            }
+            if (parse.get("state") != null) {
+                criteria.and("state").is(parse.get("state"));
+            }
+        }
+        return R.success(newsDetailService.findByNews(criteria));
     }
 }
