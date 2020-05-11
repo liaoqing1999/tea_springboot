@@ -14,6 +14,8 @@ public interface TeaService {
 
     public void update(String id,String name,Object value);
 
+    public void update(Tea tea);
+
     public Tea find(String id);
 
     public List<Tea> findAll();

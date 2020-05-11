@@ -71,12 +71,13 @@ public class Staff {
     public String getOrg() {
         if(org!=null){
             return org.toString();
+        }else{
+            return "";
         }
-        return null;
     }
 
     public void setOrg(String org) {
-        this.org =new ObjectId(org) ;
+        if(org!=null)  this.org =new ObjectId(org) ;
     }
     /*
 头像图片：
@@ -104,10 +105,14 @@ public class Staff {
 
 
     public String getRole() {
-        return role.toString();
+        if(role!=null){
+            return role.toString();
+        }else {
+            return "";
+        }
     }
-
     public void setRole(String role) {
+        if(role!=null)
         this.role = new ObjectId(role);
     }
 }

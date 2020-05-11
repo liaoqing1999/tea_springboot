@@ -1,6 +1,7 @@
 package com.qing.tea.entity;
 
 import lombok.Data;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -26,13 +27,19 @@ public class Produce {
     /*
         产品描述
     */
-    @Field("des")
-    private String des;
+    @Field("desc")
+    private String desc;
     /*
         产品等级
     */
     @Field("grade")
     private String grade;
+
+    /*
+        产品规格
+    */
+    @Field("specs")
+    private String specs;
     /*
         食用方法
     */
@@ -52,7 +59,20 @@ public class Produce {
         机构
     */
     @Field("org")
-    private String org;
+    private ObjectId org;
+
+    public String getOrg() {
+        if(org!=null){
+            return org.toString();
+        }else{
+            return "";
+        }
+    }
+
+    public void setOrg(String org) {
+        if(org!=null)
+        this.org =new ObjectId(org) ;
+    }
     /*
         存量
     */

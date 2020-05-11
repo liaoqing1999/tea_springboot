@@ -2,6 +2,7 @@ package com.qing.tea.service.impl;
 
 import com.qing.tea.entity.Tea;
 import com.qing.tea.service.TeaService;
+import com.qing.tea.utils.UpdateUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,6 +37,13 @@ public class TeaServiceImpl implements TeaService {
     public void update(String id,String name,Object value) {
         Query query=new Query(Criteria.where("_id").is(id));
         Update update = Update.update(name, value);
+        mongoTemplate.updateFirst(query, update, Tea.class);
+    }
+
+    @Override
+    public void update(Tea tea) {
+        Query query=new Query(Criteria.where("_id").is(tea.getId()));
+        Update update = UpdateUtils.getUpdate(tea);
         mongoTemplate.updateFirst(query, update, Tea.class);
     }
 

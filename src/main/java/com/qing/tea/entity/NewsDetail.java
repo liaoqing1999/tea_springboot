@@ -27,11 +27,13 @@ public class NewsDetail {
     public String getUser() {
         if(user!=null){
             return user.toString();
+        }else{
+            return "";
         }
-        return null;
     }
 
     public void setUser(String user) {
+        if(user!=null)
         this.user =new ObjectId(user) ;
     }
     /*
@@ -43,11 +45,13 @@ public class NewsDetail {
     public String getNews() {
         if(news!=null){
             return news.toString();
+        }else{
+            return "";
         }
-        return null;
     }
 
     public void setNews(String news) {
+        if(news!=null)
         this.news =new ObjectId(news) ;
     }
     /*
