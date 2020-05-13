@@ -104,7 +104,7 @@ public class News {
 评分：
 */
     @Field("rate")
-    private float rate;
+    private double rate;
     /*
 评分人数：
 */

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -101,9 +102,16 @@ public class ProduceServiceImpl implements ProduceService {
                 map.put("id",map.get("_id").toString()) ;
             }
             if(map.get("ProduceOrg")!=null){
-                ArrayList<Org> userList = (ArrayList<Org>) map.get("ProduceOrg");
-                if(userList.size()>0){
-                    map.put("orgName",userList.get(0).getName());
+                try{
+                    ArrayList<Org> orgList = (ArrayList<Org>) map.get("ProduceOrg");
+                    if(orgList.size()>0){
+                        map.put("orgName",orgList.get(0).getName());
+                    }
+                }catch(ClassCastException e){
+                    ArrayList<LinkedHashMap> orgList = (ArrayList<LinkedHashMap>) map.get("ProduceOrg");
+                    if(orgList.size()>0){
+                        map.put("orgName",orgList.get(0).get("name"));
+                    }
                 }
             }
         }

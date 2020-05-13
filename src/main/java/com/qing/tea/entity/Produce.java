@@ -49,7 +49,7 @@ public class Produce {
          价格
     */
     @Field("price")
-    private String price;
+    private double price;
     /*
         图片地址
     */
@@ -77,7 +77,7 @@ public class Produce {
         存量
     */
     @Field("reserve")
-    private String reserve;
+    private int reserve;
     /*
 状态：
 */

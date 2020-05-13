@@ -32,7 +32,7 @@ public class NewsController {
 
     @RequestMapping("getPage")
     @ResponseBody
-    public R getRolePage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,name = "cond")String cond){
+    public R getNewsPage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,name = "cond")String cond){
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         if(parse!=null) {
@@ -73,7 +73,10 @@ public class NewsController {
         News n = newsService.find(news.getId());
         newsService.update(news.getId(),"up",n.getUp()+news.getUp());
         newsService.update(news.getId(),"down",n.getDown()+news.getDown());
-        newsService.update(news.getId(),"rate",(n.getRate()*n.getRateNum()+news.getRate())/(n.getRateNum()+news.getRateNum()));
+        if(news.getRate()!=0){
+            newsService.update(news.getId(),"rate",(n.getRate()*n.getRateNum()+news.getRate())/(n.getRateNum()+news.getRateNum()));
+        }
+
         newsService.update(news.getId(),"rateNum",n.getRateNum()+news.getRateNum());
         return R.success(newsService.find(news.getId()));
     }

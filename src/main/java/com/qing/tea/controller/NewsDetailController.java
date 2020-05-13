@@ -32,9 +32,9 @@ public class NewsDetailController {
     }
     @RequestMapping("/getUser")
     @ResponseBody
-    public R getNewsDetailUser(@RequestParam(name = "userId")String userId,@RequestParam(name = "newsId")String newsId){
-        Criteria criteria = Criteria.where("userId").is(userId);
-        criteria.and("newsId").is(newsId);
+    public R getNewsDetailUser(@RequestParam(name = "user")String userId,@RequestParam(name = "news")String newsId){
+        Criteria criteria = Criteria.where("user").is(new ObjectId(userId));
+        criteria.and("news").is(new ObjectId(newsId));
         List<NewsDetail> newsDetails = newsDetailService.findByCond(criteria);
         if(newsDetails.size()==0){
             NewsDetail newsDetail = new NewsDetail();
@@ -46,7 +46,7 @@ public class NewsDetailController {
             News news = newsService.find(newsId);
             newsService.update(newsId,"read",news.getRead()+1);
         }
-        return R.success(newsDetails);
+        return R.success(newsDetails.get(0));
     }
     @RequestMapping("add")
     @ResponseBody

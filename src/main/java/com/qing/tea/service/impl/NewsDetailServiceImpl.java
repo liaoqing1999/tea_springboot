@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -77,9 +78,16 @@ public class NewsDetailServiceImpl implements NewsDetailService {
                 map.put("user",map.get("user").toString()) ;
             }
             if(map.get("staff")!=null){
-                ArrayList<Map> userList = (ArrayList<Map>) map.get("staff");
-                if(userList.size()>0){
-                    map.put("userName",userList.get(0).get("name"));
+                try{
+                    ArrayList<LinkedHashMap> userList = (ArrayList<LinkedHashMap>) map.get("staff");
+                    if(userList.size()>0){
+                        map.put("userName",userList.get(0).get("name"));
+                    }
+                }catch(ClassCastException e){
+                    ArrayList<Staff> userList = (ArrayList<Staff>) map.get("staff");
+                    if(userList.size()>0){
+                        map.put("userName",userList.get(0).getName());
+                    }
                 }
             }
             if(map.get("news")!=null){

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("produce")
@@ -21,7 +22,7 @@ public class ProduceController {
     @RequestMapping("getOrg")
     @ResponseBody
     public R getOrgProduce(@RequestParam(name = "org") String org) {
-        Criteria criteria = Criteria.where("org").is(org);
+        Criteria criteria = Criteria.where("org").is(new ObjectId(org));
         criteria.and("state").is("2");
         List<Produce> list = produceService.findByCond(criteria);
         return R.success(list);
@@ -36,6 +37,10 @@ public class ProduceController {
             if (parse.get("state") != null) {
                 criteria.and("state").is(parse.get("state"));
             }
+            if(parse.get("name")!=null){
+                Pattern pattern = Pattern.compile("^.*" + parse.get("name") + ".*$");//这里时使用的是正则匹配,searchKey是关键字，接口传参，也可以自己定义。
+                criteria.and("name").regex(pattern);
+            }
             if (parse.get("org") != null) {
                 criteria.and("org").is(new ObjectId(parse.get("org").toString()));
             }
@@ -49,6 +54,22 @@ public class ProduceController {
         List<Map> list = produceService.findList(page,rows,criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, produceService.getCount(criteria), page, rows);
         return R.success(result);
+    }
+    @RequestMapping("getLike")
+    @ResponseBody
+    public R getLike(@RequestParam(required =false,name = "typeId")String typeId,@RequestParam(required =false,name = "org")String org) {
+        Criteria criteria = new Criteria();
+        criteria.and("state").is("2");
+        Criteria c = new Criteria();
+        if(typeId!=null){
+            c.orOperator(Criteria.where("type_id").is(typeId));
+        }
+        if(org!=null){
+            c.orOperator(Criteria.where("org").is(new ObjectId(org)));
+        }
+        c.andOperator(criteria);
+        List<Map> list = produceService.findList(1,5,criteria);
+        return R.success(list);
     }
     @RequestMapping("name")
     @ResponseBody
