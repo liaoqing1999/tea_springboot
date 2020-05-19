@@ -89,7 +89,6 @@ public class DictionaryServiceImpl implements DictionaryService {
         criteria.and("type_code").ne("").ne(null);
         criteria.and("value_id").ne("").ne(null);
         AggregationOperation match = Aggregation.match(criteria);
-        List<Dictionary> dictionaryList = mongoTemplate.find(new Query(criteria), Dictionary.class);
         GroupOperation group = Aggregation.group("type_code").count().as("count").first("type_name").as("typeName");
         Aggregation aggregation = Aggregation.newAggregation(match,group);
         List<Map> results = mongoTemplate.aggregate(aggregation,"dictionary", Map.class).getMappedResults();

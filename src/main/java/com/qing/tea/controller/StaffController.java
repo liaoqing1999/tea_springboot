@@ -1,15 +1,27 @@
 package com.qing.tea.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.qing.tea.entity.Org;
+import com.qing.tea.entity.Role;
 import com.qing.tea.entity.Staff;
+import com.qing.tea.service.OrgService;
+import com.qing.tea.service.RoleService;
 import com.qing.tea.service.StaffService;
 import com.qing.tea.utils.R;
+import com.qing.tea.utils.RandomDataUtil;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -19,6 +31,10 @@ import java.util.regex.Pattern;
 public class StaffController {
     @Resource
     StaffService staffService;
+    @Resource
+    private OrgService orgService;
+    @Resource
+    RoleService roleService;
 
     @RequestMapping("login")
     @ResponseBody
@@ -98,5 +114,71 @@ public class StaffController {
         List<Map> list = staffService.findList(page, rows, criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, staffService.getCount(criteria), page, rows);
         return R.success(result);
+    }
+
+    @RequestMapping("chart")
+    @ResponseBody
+    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond){
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        String str = "substr(add(createTime,28800000),0,10)";
+        if(parse!=null) {
+            if (parse.get("type") != null) {
+                if(parse.get("type").equals("all")){
+                   str =  "substr(add(createTime,28800000),0,4)";
+                }else if(parse.get("type").equals("year")){
+                    str =  "substr(add(createTime,28800000),5,2)";
+                }else {
+                    str =  "substr(add(createTime,28800000),8,2)";
+                }
+            }
+            if (parse.get("dates") != null) {
+                JSONArray date = (JSONArray) parse.get("dates");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date startDate=formatter.parse(date.get(0).toString());
+                    Date endDate=formatter.parse(date.get(1).toString());
+                    criteria.andOperator(
+                            Criteria.where("createTime").gte(startDate),
+                            Criteria.where("createTime").lt(endDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+        return R.success(staffService.chart(criteria,str));
+    }
+
+    @RequestMapping("random")
+    @ResponseBody
+    public void random(@RequestParam(name = "num")int  num){
+        List<Org> orgList = orgService.findAll();
+        List<Role> roleList = roleService.findAll();
+        List<Staff> staffList =new ArrayList<Staff>();
+        for(int i=0;i<num;i++){
+            Staff staff = new Staff();
+            staff.setPassword("123456");
+            staff.setWork(RandomDataUtil.getRandomWork());
+            staff.setCard(RandomDataUtil.getRandomCard());
+            staff.setOrg(RandomDataUtil.getRandomOrg(orgList));
+            staff.setRole(RandomDataUtil.getRandomRole(roleList));
+            staff.setCreateTime(RandomDataUtil.getRandomDate("2019-08-1","2020-5-22"));
+            staff.setEmail(RandomDataUtil.getRandomEmail());
+            staff.setPhone(RandomDataUtil.getRandomTel());
+            staff.setSex(RandomDataUtil.getRandomSex());
+            staff.setRealName(RandomDataUtil.getChineseFamilyName()+RandomDataUtil.getRandomName());
+            staff.setState("2");
+            String name = "";
+            try {
+                name = RandomDataUtil.convertChineseToPinyin(staff.getRealName(), false, HanyuPinyinCaseType.LOWERCASE);
+            }catch (BadHanyuPinyinOutputFormatCombination e){
+                int n = RandomDataUtil.getRandomNum(4,10);
+                name = RandomDataUtil.getStringRandom(n);
+            }
+            staff.setName(name);
+            staffList.add(staff);
+        }
+        staffService.insert(staffList);
     }
 }

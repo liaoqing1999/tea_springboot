@@ -48,7 +48,9 @@ public class NewsController {
                 try {
                     Date startDate=formatter.parse(date.get(0).toString());
                     Date endDate=formatter.parse(date.get(1).toString());
-                    criteria.and("date").gte(startDate).lte(endDate);
+                    criteria.andOperator(
+                            Criteria.where("date").gte(startDate),
+                            Criteria.where("date").lte(endDate));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

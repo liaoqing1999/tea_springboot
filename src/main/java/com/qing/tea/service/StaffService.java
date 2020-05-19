@@ -10,6 +10,8 @@ public interface StaffService {
 
     public Staff insert(Staff staff);
 
+    public void insert(List<Staff> staff);
+
     public void delete(String id);
 
     public void update(String id,String name,Object value);
@@ -26,5 +28,5 @@ public interface StaffService {
 
     public List<Map> findList(int page, int rows, Criteria criteria);
 
-
+    public Map<String, Object> chart(Criteria criteria, String str);
 }

@@ -1,22 +1,20 @@
 package com.qing.tea.service.impl;
 
+import com.qing.tea.entity.Org;
+import com.qing.tea.entity.Role;
 import com.qing.tea.entity.Staff;
 import com.qing.tea.service.StaffService;
 import com.qing.tea.utils.UpdateUtils;
-import org.bson.types.ObjectId;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -31,6 +29,11 @@ public class StaffServiceImpl implements StaffService {
     @Override
     public Staff insert(Staff staff) {
         return mongoTemplate.insert(staff);
+    }
+
+    @Override
+    public void insert(List<Staff> staff) {
+       mongoTemplate.insertAll(staff);
     }
 
     @Override
@@ -92,9 +95,10 @@ public class StaffServiceImpl implements StaffService {
                 foreignField("_id").
                 as("staffOrg");
         AggregationOperation match = Aggregation.match(criteria);
+        SortOperation sort = Aggregation.sort(Sort.Direction.ASC, "createTime");
         AggregationOperation skip = Aggregation.skip((long) (page-1)*rows);
         AggregationOperation limit = Aggregation.limit((long) rows);
-        Aggregation aggregation = Aggregation.newAggregation(role,org,match,skip,limit);
+        Aggregation aggregation = Aggregation.newAggregation(role,org,match,sort,skip,limit);
         List<Map> results = mongoTemplate.aggregate(aggregation,"staff", Map.class).getMappedResults();
         for(Map map:results){
             if(map.get("org")!=null){
@@ -106,7 +110,63 @@ public class StaffServiceImpl implements StaffService {
             if(map.get("role")!=null){
                 map.put("role",map.get("role").toString()) ;
             }
+            if(map.get("staffOrg")!=null){
+                try{
+                    ArrayList<LinkedHashMap> orgList = (ArrayList<LinkedHashMap>) map.get("staffOrg");
+                    if(orgList.size()>0){
+                        map.put("orgName",orgList.get(0).get("name"));
+                    }
+                }catch(ClassCastException e){
+                    ArrayList<Org> orgList = (ArrayList<Org>) map.get("staffOrg");
+                    if(orgList.size()>0){
+                        map.put("orgName",orgList.get(0).getName());
+                    }
+                }
+            }
+            map.remove("staffOrg");
+            if(map.get("staffRole")!=null){
+                try{
+                    ArrayList<LinkedHashMap> roleList = (ArrayList<LinkedHashMap>) map.get("staffRole");
+                    if(roleList.size()>0){
+                        map.put("roleName",roleList.get(0).get("name"));
+                    }
+                }catch(ClassCastException e){
+                    ArrayList<Role> roleList = (ArrayList<Role>) map.get("staffRole");
+                    if(roleList.size()>0){
+                        map.put("roleName",roleList.get(0).getName());
+                    }
+                }
+            }
+            map.remove("staffRole");
         }
+        return results;
+    }
+
+    @Override
+    public Map<String, Object> chart(Criteria criteria, String str) {
+        List<AggregationOperation> dateOper = new ArrayList<AggregationOperation>();
+        AggregationOperation match = Aggregation.match(criteria);
+        dateOper.add(match);
+        ProjectionOperation day = Aggregation.project().andExpression(str).as("day");
+        dateOper.add(day);
+        GroupOperation dateGroup = Aggregation.group("day").count().as("count");
+        dateOper.add(dateGroup);
+        SortOperation sort = Aggregation.sort(Sort.Direction.ASC, "_id");
+        dateOper.add(sort);
+        Aggregation dateAggregation = Aggregation.newAggregation(dateOper);
+        List<Map> addTent = mongoTemplate.aggregate(dateAggregation,"staff", Map.class).getMappedResults();
+        long total = mongoTemplate.count(new Query(), Staff.class);
+        GroupOperation sexGroup = Aggregation.group("sex").count().as("count");
+        Aggregation sexAggregation = Aggregation.newAggregation(sexGroup);
+        List<Map> sex = mongoTemplate.aggregate(sexAggregation,"staff", Map.class).getMappedResults();
+        GroupOperation workGroup = Aggregation.group("work").count().as("count");
+        Aggregation workAggregation = Aggregation.newAggregation(workGroup);
+        List<Map> work = mongoTemplate.aggregate(workAggregation,"staff", Map.class).getMappedResults();
+        Map<String,Object> results = new HashMap<String, Object>();
+        results.put("sex",sex);
+        results.put("work",work);
+        results.put("total",total);
+        results.put("addTent",addTent);
         return results;
     }
 }
