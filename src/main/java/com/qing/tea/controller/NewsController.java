@@ -39,6 +39,9 @@ public class NewsController {
             if (parse.get("type") != null) {
                 criteria.and("type").is(parse.get("type"));
             }
+            if (parse.get("org") != null) {
+                criteria.and("org").is(parse.get("org"));
+            }
             if (parse.get("state") != null) {
                 criteria.and("state").is(parse.get("state"));
             }

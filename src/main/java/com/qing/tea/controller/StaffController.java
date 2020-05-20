@@ -84,7 +84,12 @@ public class StaffController {
     public void delete(@RequestParam(name = "id")String  id){
         staffService.delete(id);
     }
-
+    @RequestMapping("deleteTest")
+    @ResponseBody
+    public void deleteTest(){
+        Criteria criteria = Criteria.where("role").is(new ObjectId("5e987108e0dfa40ea76f664a"));
+        staffService.delete(criteria);
+    }
     @RequestMapping("password")
     @ResponseBody
     public void delete(@RequestParam(name = "id")String  id,@RequestParam(name = "password")String  password){
@@ -154,7 +159,14 @@ public class StaffController {
     @ResponseBody
     public void random(@RequestParam(name = "num")int  num){
         List<Org> orgList = orgService.findAll();
-        List<Role> roleList = roleService.findAll();
+        Criteria criteria =new Criteria();
+        List<Role> roles = roleService.findByCond(criteria);
+        List<Role> roleList = new ArrayList<Role>();
+        for(Role role:roles){
+            if(!role.getName().equals("superAdmin")){
+                roleList.add(role);
+            }
+        }
         List<Staff> staffList =new ArrayList<Staff>();
         for(int i=0;i<num;i++){
             Staff staff = new Staff();

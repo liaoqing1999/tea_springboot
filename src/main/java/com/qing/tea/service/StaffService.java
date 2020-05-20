@@ -14,6 +14,8 @@ public interface StaffService {
 
     public void delete(String id);
 
+    public void delete(Criteria criteria);
+
     public void update(String id,String name,Object value);
 
     public void update(Staff staff);

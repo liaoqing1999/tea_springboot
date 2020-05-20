@@ -41,6 +41,10 @@ public class StaffServiceImpl implements StaffService {
         Query query=new Query(Criteria.where("_id").is(id));
         mongoTemplate.remove(query, Staff.class);
     }
+    @Override
+    public void delete(Criteria criteria) {
+        mongoTemplate.remove(new Query(criteria), Staff.class);
+    }
 
     @Override
     public void update(String id, String name, Object value) {
@@ -95,7 +99,7 @@ public class StaffServiceImpl implements StaffService {
                 foreignField("_id").
                 as("staffOrg");
         AggregationOperation match = Aggregation.match(criteria);
-        SortOperation sort = Aggregation.sort(Sort.Direction.ASC, "createTime");
+        SortOperation sort = Aggregation.sort(Sort.Direction.DESC, "createTime");
         AggregationOperation skip = Aggregation.skip((long) (page-1)*rows);
         AggregationOperation limit = Aggregation.limit((long) rows);
         Aggregation aggregation = Aggregation.newAggregation(role,org,match,sort,skip,limit);
