@@ -61,7 +61,11 @@ public class TeaController {
         teaService.delete(id);
         return R.success("");
     }
-
+    @RequestMapping("get")
+    @ResponseBody
+    public R get(@RequestParam(name = "id")String id){
+        return R.success(teaService.find(id));
+    }
     @RequestMapping("getPlant")
     @ResponseBody
     public R getPlant(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,
@@ -86,7 +90,7 @@ public class TeaController {
     @ResponseBody
     public R getProcess(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,
                       @RequestParam(name = "userId")String userId,@RequestParam(required =false,name = "finish")boolean finish){
-        Criteria criteria = Criteria.where("process_finish").is(finish);
+        Criteria criteria = Criteria.where("processFinish").is(finish);
         criteria.and("process.processer").is(userId);
         List<Tea> list = teaService.findList(page, rows, criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, teaService.getCount(criteria), page, rows);
@@ -97,6 +101,7 @@ public class TeaController {
     @ResponseBody
     public R updateProcess(@RequestBody Tea tea){
         teaService.update(tea.getId(),"process",tea.getProcess());
+        teaService.update(tea.getId(),"processFinish",tea.isProcessFinish());
         return R.success(teaService.find(tea.getId()));
     }
 
@@ -133,6 +138,7 @@ public class TeaController {
     @ResponseBody
     public R updateCheck(@RequestBody Tea tea){
         teaService.update(tea.getId(),"check",tea.getCheck());
+        teaService.update(tea.getId(),"checkFinish",tea.isCheckFinish());
         return R.success(teaService.find(tea.getId()));
     }
 }
