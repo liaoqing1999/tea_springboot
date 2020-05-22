@@ -1,15 +1,21 @@
 package com.qing.tea.service.impl;
 import com.qing.tea.entity.Org;
+import com.qing.tea.entity.Staff;
 import com.qing.tea.service.OrgService;
 import com.qing.tea.utils.UpdateUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -79,5 +85,28 @@ public class OrgServiceImpl implements OrgService {
         Query query = new Query(criteria);
         query.skip((page-1)*rows).limit(rows);
         return mongoTemplate.find(query, Org.class);
+    }
+    @Override
+    public Map<String, Object> chart(Criteria criteria, String str){
+        List<AggregationOperation> placeOper = new ArrayList<AggregationOperation>();
+        AggregationOperation match = Aggregation.match(criteria);
+        placeOper.add(match);
+        ProjectionOperation placePro = Aggregation.project().andExpression("split(place,'-')").as("placeChart");
+        placeOper.add(placePro);
+        ProjectionOperation placePro2 = Aggregation.project().andExpression(str).as("placeChart2");
+        placeOper.add(placePro2);
+        GroupOperation placeGroup = Aggregation.group("placeChart2").count().as("count");
+        placeOper.add(placeGroup);
+        Aggregation placeAggregation = Aggregation.newAggregation(placeOper);
+        List<Map> place = mongoTemplate.aggregate(placeAggregation,"org", Map.class).getMappedResults();
+        long sumTotal = mongoTemplate.count(new Query(), Org.class);
+        long joinTotal = mongoTemplate.count(new Query(Criteria.where("state").is("2")), Org.class);
+        long applyTotal = mongoTemplate.count(new Query(Criteria.where("state").is("1")), Org.class);
+        Map<String,Object> results = new HashMap<String, Object>();
+        results.put("sumTotal",sumTotal);
+        results.put("joinTotal",joinTotal);
+        results.put("applyTotal",applyTotal);
+        results.put("place",place);
+        return results;
     }
 }

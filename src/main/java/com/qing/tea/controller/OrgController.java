@@ -1,5 +1,8 @@
 package com.qing.tea.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.Org;
 import com.qing.tea.entity.Param;
 import com.qing.tea.entity.Role;
@@ -12,7 +15,10 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -103,5 +109,29 @@ public class OrgController {
         List<Org> list = orgService.findList(page, rows, criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, orgService.getCount(criteria), page, rows);
         return R.success(result);
+    }
+
+    @RequestMapping("chart")
+    @ResponseBody
+    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond) {
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        String str = "slice(placeChart,1)";
+        if(parse!=null) {
+            if (parse.get("type") != null) {
+                if(parse.get("type").equals("province")){
+                    str =   "slice(placeChart,1)";
+                }else if(parse.get("type").equals("city")){
+                    str =   "slice(placeChart,2)";
+                }else if(parse.get("type").equals("area")){
+                    str =  "slice(placeChart,3)";
+                }
+            }
+            if(parse.get("place")!=null){
+                Pattern pattern = Pattern.compile("^.*" + parse.get("place") + ".*$");//这里时使用的是正则匹配,searchKey是关键字，接口传参，也可以自己定义。
+                criteria.and("place").regex(pattern);
+            }
+        }
+        return R.success(orgService.chart(criteria,str));
     }
 }

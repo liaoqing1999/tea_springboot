@@ -3,6 +3,7 @@ import com.qing.tea.entity.Org;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
+import java.util.Map;
 
 public interface OrgService {
     public long getCount(Criteria criteria) ;
@@ -25,5 +26,5 @@ public interface OrgService {
 
     public List<Org> findList(int page, int rows, Criteria criteria);
 
-
+    public Map<String, Object> chart(Criteria criteria, String str);
 }
