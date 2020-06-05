@@ -26,4 +26,6 @@ public interface ProduceService {
     public List<Produce> findLike(String name,String searchKey );
 
     public List<Map> findList(int page, int rows, Criteria criteria);
+
+    public Map<String, Object> chart(Criteria criteria, String str);
 }

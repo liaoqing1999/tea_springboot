@@ -98,4 +98,43 @@ public class NewsController {
         newsService.update(news);
         return R.success(newsService.find(news.getId()));
     }
+
+    @RequestMapping("chart")
+    @ResponseBody
+    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond) {
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        String str = "substr(add(date,28800000),0,10)";
+        String sortName = "read";
+        if(parse!=null) {
+            if (parse.get("type") != null) {
+                if(parse.get("type").equals("all")){
+                    str =  "substr(add(date,28800000),0,4)";
+                }else if(parse.get("type").equals("date")){
+                    str =  "substr(add(date,28800000),11,2)";
+                }else if(parse.get("type").equals("year")){
+                    str =  "substr(add(date,28800000),5,2)";
+                }else {
+                    str =  "substr(add(date,28800000),8,2)";
+                }
+            }
+            if (parse.get("sortName") != null) {
+                sortName =(String) parse.get("sortName");
+            }
+            if (parse.get("dates") != null) {
+                JSONArray date = (JSONArray) parse.get("dates");
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date startDate=formatter.parse(date.get(0).toString());
+                    Date endDate=formatter.parse(date.get(1).toString());
+                    criteria.andOperator(
+                            Criteria.where("date").gte(startDate),
+                            Criteria.where("date").lt(endDate));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return R.success(newsService.chart(criteria,str,sortName));
+    }
 }

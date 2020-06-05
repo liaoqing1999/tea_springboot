@@ -3,13 +3,16 @@ spring:
   data:
     mongodb:
       database: tea
-      host: 127.0.0.1
+      host: 39.105.81.9
       option:
         socket-keep-alive: true
         max-connection-idle-time: 60000
       port: 27017
       username: root
       password: root
+      authentication-database: admin
+  jackson:
+    default-property-inclusion: non_null
 
 server:
   port: 8090

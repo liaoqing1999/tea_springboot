@@ -71,9 +71,13 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
+    public List<Staff> findByCond(Query query) {
+        return mongoTemplate.find(query,Staff.class);
+    }
+
+    @Override
     public List<Staff> findByCond(Criteria criteria) {
-        Query query=new Query(criteria);
-        return mongoTemplate.find(query, Staff.class);
+        return mongoTemplate.find(new Query(criteria),Staff.class);
     }
 
     @Override

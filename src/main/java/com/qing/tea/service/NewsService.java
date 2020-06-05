@@ -3,6 +3,7 @@ import com.qing.tea.entity.News;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
+import java.util.Map;
 
 public interface NewsService {
     public long getCount(Criteria criteria) ;
@@ -25,5 +26,5 @@ public interface NewsService {
 
     public List<News> findList(int page, int rows, Criteria criteria);
 
-
+    public Map<String, Object> chart(Criteria criteria, String str,String sortNsme);
 }

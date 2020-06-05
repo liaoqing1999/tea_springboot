@@ -15,10 +15,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -41,10 +38,10 @@ public class OrgController {
         if(role.size()>0){
             param.staff.setRole(role.get(0).getId());
         }
+        param.org.setState("1");
         Org org = orgService.insert(param.org);
         param.staff.setOrg(org.getId());
         param.staff.setWork("orgAdmin");
-        param.org.setState("1");
         Staff staff = staffService.insert(param.staff);
         //param.org.setAdmin(staff.getId());
         staffService.update(staff.getId(), "org", org.getId());

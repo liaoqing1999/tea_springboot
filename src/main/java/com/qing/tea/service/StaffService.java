@@ -1,6 +1,7 @@
 package com.qing.tea.service;
 import com.qing.tea.entity.Staff;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,8 @@ public interface StaffService {
     public List<Staff> findAll();
 
     public List<Staff> findByCond(Criteria criteria);
+
+    public List<Staff> findByCond(Query query);
 
     public List<Staff> findLike(String name,String searchKey );
 

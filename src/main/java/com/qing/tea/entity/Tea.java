@@ -49,7 +49,7 @@ public class Tea implements Serializable {
         图片地址
     */
     @Field("img")
-    private String[] img;
+    private List<String> img;
     /*
         二维码地址
     */

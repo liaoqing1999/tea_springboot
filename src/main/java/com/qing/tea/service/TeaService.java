@@ -4,6 +4,7 @@ import com.qing.tea.entity.Tea;
 import org.springframework.data.mongodb.core.query.Criteria;
 
 import java.util.List;
+import java.util.Map;
 
 public interface TeaService {
     public long getCount(Criteria criteria) ;
@@ -25,4 +26,6 @@ public interface TeaService {
     public List<Tea> findLike(String name,String searchKey );
 
     public List<Tea> findList(int page, int rows, Criteria criteria);
+
+    public List<Object> findListStaff(int page, int rows, Criteria criteria);
 }

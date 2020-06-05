@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class Storage {
@@ -35,7 +36,7 @@ public class Storage {
      图片
  */
     @Field("img")
-    private String[] img;
+    private List<String> img;
 
     /*
 状态：

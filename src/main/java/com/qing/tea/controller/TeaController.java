@@ -4,12 +4,20 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.Tea;
 import com.qing.tea.service.TeaService;
+import com.qing.tea.utils.QRCodeUtil;
 import com.qing.tea.utils.R;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.awt.image.BufferedImageFilter;
+import java.io.*;
+import java.net.URLEncoder;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +46,7 @@ public class TeaController {
                 criteria.and("produce").is(parse.get("produce"));
             }
         }
-        List<Tea> list = teaService.findList(page,rows,criteria);
+        List<Object> list = teaService.findListStaff(page,rows,criteria);
         Map<String, Object> result = MapReuslt.mapPage(list, teaService.getCount(criteria), page, rows);
         return R.success(result);
     }
@@ -66,6 +74,26 @@ public class TeaController {
     public R get(@RequestParam(name = "id")String id){
         return R.success(teaService.find(id));
     }
+
+    @RequestMapping("downloadQR")
+    @ResponseBody
+    public void updateQr(@RequestParam(name = "id")String id,@RequestParam(name = "name")String name, HttpServletResponse response) throws Exception{
+        BufferedImage image = QRCodeUtil.createImage("溯源码为：" + id, null, false);
+        if (null!=image) {
+            response.setContentType("image/jpeg;charset=utf-8");
+            response.setCharacterEncoding("utf-8");
+            response.addHeader("Content-Disposition",
+                    "attachment;fileName=" + URLEncoder.encode(name+".jpg", "utf-8") );// 设置文件名
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            boolean flag = ImageIO.write(image, "jpg", out);
+            byte[] buffer = out.toByteArray();
+            OutputStream os = response.getOutputStream();
+            os.write(buffer, 0,buffer.length);
+            os.flush();
+        }
+    }
+
+
     @RequestMapping("getPlant")
     @ResponseBody
     public R getPlant(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,
@@ -83,8 +111,6 @@ public class TeaController {
         teaService.update(tea.getId(),"plant",tea.getPlant());
         return R.success(teaService.find(tea.getId()));
     }
-
-
 
     @RequestMapping("getProcess")
     @ResponseBody

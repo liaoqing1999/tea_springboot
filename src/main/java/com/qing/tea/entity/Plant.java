@@ -2,6 +2,9 @@ package com.qing.tea.entity;
 
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
+
 @Data
 public class Plant {
 
@@ -21,13 +24,13 @@ public class Plant {
         施药记录
     */
     @Field("pesticide")
-    private Pesticide[] pesticide;
+    private List<Pesticide> pesticide;
 
     /*
         图片
     */
     @Field("img")
-    private String[] img;
+    private List<String> img;
 
     /*
 状态：

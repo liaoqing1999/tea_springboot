@@ -4,19 +4,14 @@ import com.qing.tea.entity.Produce;
 import com.qing.tea.service.ProduceService;
 import com.qing.tea.utils.UpdateUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.LookupOperation;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Service
@@ -115,6 +110,40 @@ public class ProduceServiceImpl implements ProduceService {
                 }
             }
         }
+        return results;
+    }
+
+
+    @Override
+    public Map<String, Object> chart(Criteria criteria, String str) {
+        List<AggregationOperation> typeOper = new ArrayList<AggregationOperation>();
+        AggregationOperation match = Aggregation.match(criteria);
+        typeOper.add(match);
+        ProjectionOperation day = Aggregation.project().andExpression(str).as("type");
+        typeOper.add(day);
+        GroupOperation dateGroup = Aggregation.group("type").count().as("count");
+        typeOper.add(dateGroup);
+        Aggregation typeAggregation = Aggregation.newAggregation(typeOper);
+        List<Map> type = mongoTemplate.aggregate(typeAggregation,"produce", Map.class).getMappedResults();
+        long total = mongoTemplate.count(new Query(), Produce.class);
+        GroupOperation gradeGroup = Aggregation.group("grade").count().as("count");
+        Aggregation gradeAggregation = Aggregation.newAggregation(gradeGroup);
+        List<Map> grade = mongoTemplate.aggregate(gradeAggregation,"produce", Map.class).getMappedResults();
+
+        LookupOperation orgOper= LookupOperation.newLookup().
+                from("org").  //关联从表名
+                localField("org").
+                foreignField("_id").
+                as("ProduceOrg");
+        GroupOperation orgGroup = Aggregation.group("org").count().as("count").first("ProduceOrg.name").as("orgName");
+        Aggregation aggregation = Aggregation.newAggregation(orgOper,orgGroup);
+        List<Map> org = mongoTemplate.aggregate(aggregation,"produce", Map.class).getMappedResults();
+
+        Map<String,Object> results = new HashMap<String, Object>();
+        results.put("grade",grade);
+        results.put("org",org);
+        results.put("total",total);
+        results.put("type",type);
         return results;
     }
 }

@@ -68,7 +68,7 @@ public class ProduceController {
             c.orOperator(Criteria.where("org").is(new ObjectId(org)));
         }
         c.andOperator(criteria);
-        List<Map> list = produceService.findList(1,5,criteria);
+        List<Map> list = produceService.findList(1,4,criteria);
         return R.success(list);
     }
     @RequestMapping("name")
@@ -101,5 +101,21 @@ public class ProduceController {
     @ResponseBody
     public void delete(@RequestParam(name = "id")String  id){
         produceService.delete(id);
+    }
+
+    @RequestMapping("chart")
+    @ResponseBody
+    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond) {
+        Criteria criteria = new Criteria();
+        JSONObject parse = JSON.parseObject(cond);
+        String str = "substr(type_id,0,4)";
+        if(parse!=null) {
+            if(parse.get("typeId")!=null){
+                str =  "substr(type_id,0,6)";
+                Pattern pattern = Pattern.compile("^.*" + parse.get("typeId") + ".*$");//这里时使用的是正则匹配,searchKey是关键字，接口传参，也可以自己定义。
+                criteria.and("type_id").regex(pattern);
+            }
+        }
+        return R.success(produceService.chart(criteria,str));
     }
 }

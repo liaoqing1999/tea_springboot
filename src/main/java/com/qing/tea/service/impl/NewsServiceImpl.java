@@ -1,18 +1,21 @@
 package com.qing.tea.service.impl;
 import com.qing.tea.entity.News;
-import com.qing.tea.entity.Org;
+import com.qing.tea.entity.Staff;
 import com.qing.tea.service.NewsService;
-import com.qing.tea.service.OrgService;
 import com.qing.tea.utils.UpdateUtils;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @Service
@@ -81,5 +84,35 @@ public class NewsServiceImpl implements NewsService {
         query.with(Sort.by(Sort.Direction.DESC,"_id"));
         query.skip((page-1)*rows).limit(rows);
         return mongoTemplate.find(query, News.class);
+    }
+
+    @Override
+    public Map<String, Object> chart(Criteria criteria, String str,String sortNsme){
+        List<AggregationOperation> dateOper = new ArrayList<AggregationOperation>();
+        AggregationOperation match = Aggregation.match(criteria);
+        dateOper.add(match);
+        ProjectionOperation day = Aggregation.project().andExpression(str).as("day");
+        dateOper.add(day);
+        GroupOperation dateGroup = Aggregation.group("day").count().as("count");
+        dateOper.add(dateGroup);
+        SortOperation sort = Aggregation.sort(Sort.Direction.ASC, "_id");
+        dateOper.add(sort);
+        Aggregation dateAggregation = Aggregation.newAggregation(dateOper);
+        List<Map> date = mongoTemplate.aggregate(dateAggregation,"news", Map.class).getMappedResults();
+        long total = mongoTemplate.count(new Query(), News.class);
+        GroupOperation typeGroup = Aggregation.group("type").count().as("count");
+        Aggregation typeAggregation = Aggregation.newAggregation(typeGroup);
+        List<Map> type = mongoTemplate.aggregate(typeAggregation,"news", Map.class).getMappedResults();
+
+        Query query = new Query(criteria);
+        query.with(Sort.by(Sort.Direction.DESC,sortNsme));
+        query.limit(7);
+        List<News> read = mongoTemplate.find(query, News.class);
+        Map<String,Object> results = new HashMap<String, Object>();
+        results.put("type",type);
+        results.put("read",read);
+        results.put("total",total);
+        results.put("date",date);
+        return results;
     }
 }

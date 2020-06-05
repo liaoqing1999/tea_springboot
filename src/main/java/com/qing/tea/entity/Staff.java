@@ -72,7 +72,7 @@ public class Staff {
         if(org!=null){
             return org.toString();
         }else{
-            return "";
+            return null;
         }
     }
 
@@ -108,7 +108,7 @@ public class Staff {
         if(role!=null){
             return role.toString();
         }else {
-            return "";
+            return null;
         }
     }
     public void setRole(String role) {
