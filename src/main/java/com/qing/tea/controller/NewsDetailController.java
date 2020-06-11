@@ -4,39 +4,63 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.News;
 import com.qing.tea.entity.NewsDetail;
-import com.qing.tea.entity.Role;
 import com.qing.tea.service.NewsDetailService;
 import com.qing.tea.service.NewsService;
 import com.qing.tea.utils.R;
+import io.swagger.annotations.*;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
-
+@Api(tags  = "用户资讯记录操作接口")
 @RestController
 @RequestMapping("newsDetail")
 public class NewsDetailController {
+    /**
+     * 服务对象
+     */
     @Resource
     private NewsDetailService newsDetailService;
     @Resource
     private NewsService newsService;
-    @RequestMapping("/get")
+
+    /**
+     * 获取用户资讯记录
+     * @param id
+     * @return
+     */
+    @ApiOperation(value = "获取用户资讯记录", notes="根据id获取用户资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= NewsDetail.class)
+    })
+    @GetMapping("/get")
     @ResponseBody
-    public R getNewsDetail(@RequestParam(name = "id")String id){
+    public R getNewsDetail(@ApiParam(value="用户资讯记录id",required = true)@RequestParam(name = "id")String id){
         return R.success(newsDetailService.find(id));
     }
-    @RequestMapping("/getUser")
+
+    /**
+     * 获取和用户相关的资讯记录
+     * @param userId 用户id
+     * @param newsId 资讯id
+     * @return
+     */
+    @ApiOperation(value = "获取用户特定资讯记录", notes="根据用户id和资讯id获取和用户相关的资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= NewsDetail.class)
+    })
+    @GetMapping("/getUser")
     @ResponseBody
-    public R getNewsDetailUser(@RequestParam(name = "user")String userId,@RequestParam(name = "news")String newsId){
+    public R getNewsDetailUser(
+            @ApiParam(value="用户id",required = true)@RequestParam(name = "user")String userId,
+            @ApiParam(value="资讯id",required = true)@RequestParam(name = "news")String newsId){
         Criteria criteria = Criteria.where("user").is(new ObjectId(userId));
         criteria.and("news").is(new ObjectId(newsId));
         List<NewsDetail> newsDetails = newsDetailService.findByCond(criteria);
-        if(newsDetails.size()==0){
+        if(null==newsDetails||newsDetails.size()==0){
             NewsDetail newsDetail = new NewsDetail();
             newsDetail.setDate(new Date());
             newsDetail.setNews(newsId);
@@ -48,23 +72,52 @@ public class NewsDetailController {
         }
         return R.success(newsDetails.get(0));
     }
-    @RequestMapping("add")
+
+    /**
+     * 新增用户资讯记录
+     * @param newsDetail 资讯实体
+     * @return
+     */
+    @ApiOperation(value = "新增用户资讯记录", notes="新增一条用户资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= NewsDetail.class)
+    })
+    @PostMapping("add")
     @ResponseBody
-    public R<NewsDetail> add(@RequestBody NewsDetail  newsDetail){
+    public R<NewsDetail> add( @ApiParam(value="资讯实体",required = true)@RequestBody NewsDetail  newsDetail){
         return R.success(newsDetailService.insert(newsDetail));
     }
-    @RequestMapping("updateUser")
+
+    /**
+     * 更新用户资讯记录
+     * @param newsDetail 资讯实体
+     * @return
+     */
+    @ApiOperation(value = "更新特定用户资讯记录", notes="用户操作资讯后更新资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= NewsDetail.class)
+    })
+    @PostMapping("updateUser")
     @ResponseBody
-    public R<NewsDetail> updateRole(@RequestBody NewsDetail  newsDetail){
+    public R<NewsDetail> updateRole(@ApiParam(value="资讯实体",required = true)@RequestBody NewsDetail  newsDetail){
         newsDetailService.update(newsDetail.getId(),"up",newsDetail.isUp());
         newsDetailService.update(newsDetail.getId(),"down",newsDetail.isDown());
         newsDetailService.update(newsDetail.getId(),"rate",newsDetail.getRate());
         return R.success(newsDetailService.find(newsDetail.getId()));
     }
 
-    @RequestMapping("getByCond")
+    /**
+     * 通过条件查询用户资讯记录
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "根据条件查询用户资讯记录", notes="根据条件查询用户资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= NewsDetail[].class)
+    })
+    @GetMapping("getByCond")
     @ResponseBody
-    public R getListByCond(@RequestParam(required =false,name = "cond")String cond){
+    public R getListByCond(@ApiParam(value="条件")@RequestParam(required =false,name = "cond")String cond){
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         if(parse!=null) {

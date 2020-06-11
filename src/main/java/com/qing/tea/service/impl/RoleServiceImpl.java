@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -49,6 +50,19 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<Role> findAll() {
         return mongoTemplate.findAll(Role.class);
+    }
+
+    @Override
+    public List<Role> findAllDefault() {
+        Criteria criteria =new Criteria();
+        List<Role> roles = mongoTemplate.find(new Query(criteria),Role.class);
+        List<Role> result = new ArrayList<Role>();
+        for(Role role:roles){
+            if(!role.getName().equals("superAdmin")){
+                result.add(role);
+            }
+        }
+        return result;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.qing.tea.entity.Dictionary;
 import com.qing.tea.service.DictionaryService;
 import com.qing.tea.utils.Node;
 import com.qing.tea.utils.R;
+import io.swagger.annotations.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,28 +16,62 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+@Api(tags  = "字典操作接口")
 @RestController
 @RequestMapping("dictionary")
 public class DictionaryController {
+
+    /**
+     * 服务层对象
+     */
     @Resource
     private DictionaryService dictionaryService;
 
-    @RequestMapping("getAll")
+    /**
+     * 获取所有字典
+     * @return
+     */
+    @GetMapping("getAll")
+    @ApiOperation(value = "获取所有字典", notes="返回所有字段的集合")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary[].class)
+    })
     @ResponseBody
-    public R getAll() {
+    public R<List<Dictionary>> getAll() {
         return R.success(dictionaryService.findAll());
     }
 
-    @RequestMapping("getByCond")
+    /**
+     * 通过条件获取字典
+     * @param typeCode 类型code
+     * @param valueId  值id
+     * @return
+     */
+    @ApiOperation(value = "通过条件获取字典", notes="根据类型code和值id返回对应的字典数据")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary[].class)
+    })
+    @GetMapping("getByCond")
     @ResponseBody
-    public R getByCond(@RequestParam(name = "typeCode") String typeCode,
-                       @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
+    public R<List<Dictionary>> getByCond(@ApiParam(value="类型code",required = true) @RequestParam(name = "typeCode") String typeCode,
+                                         @ApiParam(value="值id")@RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
         return R.success(dictionaryService.findByCodeValue(typeCode, valueId,"2"));
     }
-    @RequestMapping("name")
+
+    /**
+     * 字典类型名和字典值唯一性校验
+     * @param typeCode 类型code
+     * @param valueId 值id
+     * @return
+     */
+    @ApiOperation(value = "字典类型名和字典值唯一性校验", notes="根据类型code和值id验证唯一性")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=String.class)
+    })
+    @GetMapping("name")
     @ResponseBody
-    public R name(@RequestParam(name = "typeCode")String typeCode,@RequestParam(required = false,name = "valueId")String valueId){
+    public R name(@ApiParam(value="类型code",required = true) @RequestParam(name = "typeCode") String typeCode,
+                  @ApiParam(value="值id")@RequestParam(required = false, defaultValue = "", name = "valueId") String valueId){
         Criteria criteria = Criteria.where("type_code").is(typeCode);
         if(valueId!=null){
             criteria.and("value_id").is(valueId);
@@ -54,9 +89,18 @@ public class DictionaryController {
         }
         return R.success(msg);
     }
-    @RequestMapping("getTeaType")
+
+    /**
+     * 获取茶叶类型
+     * @return
+     */
+    @ApiOperation(value = "获取茶叶类型", notes="返回茶叶类型树")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Node[].class)
+    })
+    @GetMapping("getTeaType")
     @ResponseBody
-    public R getTeaType() {
+    public R<List<Node>> getTeaType() {
         Criteria criteria = Criteria.where("type_code").is("type");
         criteria.and("state").is("2");
         List<Dictionary> clist = dictionaryService.findByCond(criteria);
@@ -95,9 +139,19 @@ public class DictionaryController {
         }
         return R.success(result);
     }
-    @RequestMapping("getType")
+
+    /**
+     * 获取字典类型List
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "获取全部字典类型", notes="返回字典类型List")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Map[].class)
+    })
+    @GetMapping("getType")
     @ResponseBody
-    public R getTypePage(@RequestParam(required =false,name = "cond")String cond){
+    public R<List<Map>> getTypePage( @ApiParam(value="条件") @RequestParam(required =false,name = "cond")String cond){
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         if(parse!=null){
@@ -106,54 +160,138 @@ public class DictionaryController {
         List<Map> list = dictionaryService.findTypeList(criteria);
         return R.success(list);
     }
-    @RequestMapping("get")
+
+    /**
+     * 获取字典List
+     * @param typeCode 类型Code
+     * @param valueId 值id
+     * @return
+     */
+    @ApiOperation(value = "获取字典List", notes="根据字典类型返回字典List")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary[].class)
+    })
+    @GetMapping("get")
     @ResponseBody
-    public R getPage(@RequestParam(name = "typeCode") String typeCode,
-                       @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
+    public R<List<Dictionary>> getPage(@ApiParam(value="类型Code",required = true)@RequestParam(name = "typeCode") String typeCode,
+                                       @ApiParam(value="值id") @RequestParam(required = false, defaultValue = "", name = "valueId") String valueId) {
         return R.success(dictionaryService.findByCodeValue(typeCode, valueId,null));
     }
-    @RequestMapping("addType")
+
+    /**
+     * 新增字典类型
+     * @param dictionary 字典实体
+     * @return
+     */
+    @ApiOperation(value = "新增字典类型", notes="新增一个字典类型，带有一条默认数据")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary.class)
+    })
+    @PostMapping("addType")
     @ResponseBody
-    public R addType(@RequestBody Dictionary dictionary){
+    public R<Dictionary> addType(@ApiParam(value="字典实体" ,required = true)@RequestBody Dictionary dictionary){
         dictionary.setState("2");
         dictionary.setValueId("0");
         dictionary.setValueName("默认数据");
         return R.success(dictionaryService.insert(dictionary));
     }
-    @RequestMapping("add")
+
+    /**
+     * 新增字典
+     * @param dictionary 字典实体
+     * @return
+     */
+    @ApiOperation(value = "新增字典", notes="新增字典")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary.class)
+    })
+    @PostMapping("add")
     @ResponseBody
-    public R add(@RequestBody Dictionary dictionary){
+    public R<Dictionary> add(@ApiParam(value="字典实体" ,required = true)@RequestBody Dictionary dictionary){
         return R.success(dictionaryService.insert(dictionary));
     }
-    @RequestMapping("update")
+
+    /**
+     * 更新字典
+     * @param dictionary 字典实体
+     * @return
+     */
+    @ApiOperation(value = "更新字典", notes="更新字典")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Dictionary.class)
+    })
+    @PostMapping("update")
     @ResponseBody
-    public R update(@RequestBody Dictionary dictionary){
+    public R<Dictionary> update(@ApiParam(value="字典实体",required = true)@RequestBody Dictionary dictionary){
         dictionaryService.update(dictionary);
         return R.success(dictionaryService.find(dictionary.getId()));
     }
-    @RequestMapping("updateType")
+
+    /**
+     * 更新字典类型
+     * @param typeCode 类型Code
+     * @param typeName 类型名
+     * @return
+     */
+    @ApiOperation(value = "更新字典类型", notes="更新字典类型，并更新所有该类型的字典数据")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=String.class)
+    })
+    @GetMapping("updateType")
     @ResponseBody
-    public R updateType(@RequestParam(name = "typeCode")String typeCode,@RequestParam(name = "typeName")String typeName){
+    public R<String> updateType(@ApiParam(value="类型Code",required = true)@RequestParam(name = "typeCode")String typeCode,
+                                @ApiParam(value="类型名",required = true)@RequestParam(name = "typeName")String typeName){
         Criteria criteria = Criteria.where("type_code").is(typeCode);
         dictionaryService.updateAll(criteria,"type_name",typeName);
         return R.success("success");
     }
-    @RequestMapping("delete")
+
+    /**
+     * 删除字典
+     * @param id 字典id
+     * @return
+     */
+    @ApiOperation(value = "删除字典", notes="根据id删除字典")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=String.class)
+    })
+    @DeleteMapping("delete")
     @ResponseBody
-    public R delete(@RequestParam(name = "id")String id){
+    public R delete( @ApiParam(value="字典id",required = true) @RequestParam(name = "id")String id){
         dictionaryService.delete(id);
         return R.success("success");
     }
-    @RequestMapping("deleteType")
+
+    /**
+     * 删除字典类型
+     * @param typeCode 类型Code
+     * @return
+     */
+    @ApiOperation(value = "删除字典类型", notes="根据类型Code删除字典类型，并删除该类型下所有字典数据")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=String.class)
+    })
+    @DeleteMapping("deleteType")
     @ResponseBody
-    public R deleteType(@RequestParam(name = "typeCode")String typeCode){
+    public R deleteType(@ApiParam(value="类型Code",required = true)@RequestParam(name = "typeCode")String typeCode){
         Criteria criteria = Criteria.where("type_code").is(typeCode);
         dictionaryService.delete(criteria);
         return R.success("success");
     }
-    @RequestMapping("getByType")
+
+
+    /**
+     * 获取字典集合
+     * @param typeCodes 类型Code数组
+     * @return
+     */
+    @ApiOperation(value = "获取字典集合", notes="根据类型Code数组获取类型下字典数据，并返回map对应字典集合")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Map.class)
+    })
+    @GetMapping("getByType")
     @ResponseBody
-    public R getTypeValue(@RequestParam(name = "typeCodes") String[] typeCodes) {
+    public R<Map<String, Object>> getTypeValue(@ApiParam(value="类型Code数组",required = true)@RequestParam(name = "typeCodes") String[] typeCodes) {
         Map<String, Object> result = new HashMap<String, Object>();
         for (String typeCode : typeCodes) {
             Criteria criteria = Criteria.where("type_code").is(typeCode);

@@ -11,13 +11,13 @@ import com.qing.tea.service.RoleService;
 import com.qing.tea.service.StaffService;
 import com.qing.tea.utils.R;
 import com.qing.tea.utils.RandomDataUtil;
+import io.swagger.annotations.*;
 import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
 import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.web.bind.annotation.*;
-
 import javax.annotation.Resource;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,10 +26,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
+@Api(tags  = "用户操作接口")
 @RestController
 @RequestMapping("staff")
 public class StaffController {
+    /**
+     * 服务对象
+     */
     @Resource
     StaffService staffService;
     @Resource
@@ -37,9 +40,21 @@ public class StaffController {
     @Resource
     RoleService roleService;
 
-    @RequestMapping("login")
+    /**
+     * 用户登录
+     * @param name 用户名
+     * @param password 密码
+     * @return
+     */
+    @ApiOperation(value = "用户登录", notes="通过用户名和密码登录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= String.class)
+    })
+    @GetMapping("login")
     @ResponseBody
-    public R login(@RequestParam(name = "name") String name, @RequestParam(name = "password") String password) {
+    public R login(
+            @ApiParam(value="用户名",required = true)@RequestParam(name = "name") String name,
+            @ApiParam(value="密码",required = true)@RequestParam(name = "password") String password) {
         Criteria criteria = Criteria.where("name").is(name);
         List<Staff> staffList = staffService.findByCond(criteria);
         String msg = "";
@@ -56,9 +71,19 @@ public class StaffController {
         return R.success(msg);
     }
 
-    @RequestMapping("name")
+
+    /**
+     * 验证用户名唯一性
+     * @param name
+     * @return
+     */
+    @ApiOperation(value = "验证用户名唯一性", notes="检验用户名是否唯一")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= String.class)
+    })
+    @GetMapping("name")
     @ResponseBody
-    public R name(@RequestParam(name = "name") String name) {
+    public R name(@ApiParam(value="用户名",required = true)@RequestParam(name = "name") String name) {
         Criteria criteria = Criteria.where("name").is(name);
         List<Staff> staffList = staffService.findByCond(criteria);
         String msg = "";
@@ -70,41 +95,103 @@ public class StaffController {
         return R.success(msg);
     }
 
-    @RequestMapping("update")
+
+    /**
+     * 更新用户
+     * @param staff 用户实体
+     * @return
+     */
+    @ApiOperation(value = "更新用户", notes="更新用户")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= Staff.class)
+    })
+    @PostMapping("update")
     @ResponseBody
-    public R update(@RequestBody Staff staff) {
+    public R update(@ApiParam(value="用户实体",required = true)@RequestBody Staff staff) {
         staffService.update(staff);
         return R.success(staffService.find(staff.getId()));
     }
 
-    @RequestMapping("add")
+
+    /**
+     * 新增用户
+     * @param staff 用户实体
+     * @return
+     */
+    @ApiOperation(value = "新增用户", notes="新增一条用户记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= Staff.class)
+    })
+    @PostMapping("add")
     @ResponseBody
-    public R add(@RequestBody Staff staff) {
+    public R add(@ApiParam(value="用户实体",required = true)@RequestBody Staff staff) {
         return R.success(staffService.insert(staff));
     }
 
-    @RequestMapping("delete")
+
+    /**
+     * 删除用户
+     * @param id 用户id
+     */
+    @ApiOperation(value = "删除用户", notes="根据id删除用户")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @DeleteMapping("delete")
     @ResponseBody
-    public void delete(@RequestParam(name = "id") String id) {
+    public void delete(@ApiParam(value="用户id",required = true)@RequestParam(name = "id") String id) {
         staffService.delete(id);
     }
 
-    @RequestMapping("deleteTest")
+
+    /**
+     * 删除测试
+     */
+    @ApiOperation(value = "删除测试", notes="用于测试删除角色为超级管理员的角色")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @DeleteMapping("deleteTest")
     @ResponseBody
     public void deleteTest() {
         Criteria criteria = Criteria.where("role").is(new ObjectId("5e987108e0dfa40ea76f664a"));
         staffService.delete(criteria);
     }
 
-    @RequestMapping("password")
+    /**
+     * 更新密码
+     * @param id 用户id
+     * @param password 新密码
+     */
+    @ApiOperation(value = "更新密码", notes="用于更新用户密码")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @GetMapping("password")
     @ResponseBody
-    public void delete(@RequestParam(name = "id") String id, @RequestParam(name = "password") String password) {
+    public void password(
+            @ApiParam(value="用户id",required = true)@RequestParam(name = "id") String id,
+            @ApiParam(value="新密码",required = true)@RequestParam(name = "password") String password) {
         staffService.update(id, "password", password);
     }
 
-    @RequestMapping("getPage")
+    /**
+     * 用户分页
+     * @param page 页数
+     * @param rows 行数
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "用户分页", notes="用户列表分页")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response = Map.class)
+    })
+    @GetMapping("getPage")
     @ResponseBody
-    public R getStaffPage(@RequestParam(name = "page", required = false, defaultValue = "1") int page, @RequestParam(name = "rows", required = false, defaultValue = "10") int rows, @RequestParam(required = false, name = "cond") String cond) {
+    public R getStaffPage(
+            @ApiParam(value="页数")@RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @ApiParam(value="行数") @RequestParam(name = "rows", required = false, defaultValue = "10") int rows,
+            @ApiParam(value="条件")@RequestParam(required = false, name = "cond") String cond) {
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         if (parse != null) {
@@ -127,9 +214,22 @@ public class StaffController {
         return R.success(result);
     }
 
-    @RequestMapping("getOrgRole")
+
+    /**
+     * 获取机构下某角色的用户
+     * @param org 机构id
+     * @param role 角色id
+     * @return
+     */
+    @ApiOperation(value = "获取机构下某角色的用户", notes="获取机构下某特点角色的用户")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response = Staff[].class)
+    })
+    @GetMapping("getOrgRole")
     @ResponseBody
-    public R getOrgRole(@RequestParam(name = "org", required = false) String org, @RequestParam(required = false, name = "role") String role) {
+    public R<List<Staff>> getOrgRole(
+            @ApiParam(value="机构id",required = true)@RequestParam(name = "org", required = false) String org,
+            @ApiParam(value="角色id")@RequestParam(required = false, name = "role") String role) {
         Criteria criteria =new Criteria();
         criteria.and("state").is("2");
         if(null != org){
@@ -148,9 +248,20 @@ public class StaffController {
         query.fields().include("_id");
         return  R.success(staffService.findByCond(query));
     }
-    @RequestMapping("chart")
+
+
+    /**
+     * 用户分析
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "用户分析", notes="用户图表分析")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response = Map.class)
+    })
+    @GetMapping("chart")
     @ResponseBody
-    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond){
+    public R<Map<String, Object>> chart( @ApiParam(value="条件")@RequestParam(name = "cond",required =false) String cond){
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         String str = "substr(add(createTime,28800000),0,10)";
@@ -182,18 +293,20 @@ public class StaffController {
         return R.success(staffService.chart(criteria,str));
     }
 
-    @RequestMapping("random")
+
+    /**
+     * 随机生成用户
+     * @param num 数量
+     */
+    @ApiOperation(value = "随机生成用户", notes="随机生成相应数量的用户")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @GetMapping("random")
     @ResponseBody
-    public void random(@RequestParam(name = "num")int  num){
+    public void random(@ApiParam(value="数量")@RequestParam(name = "num",required = false,defaultValue = "10")int  num){
         List<Org> orgList = orgService.findAll();
-        Criteria criteria =new Criteria();
-        List<Role> roles = roleService.findByCond(criteria);
-        List<Role> roleList = new ArrayList<Role>();
-        for(Role role:roles){
-            if(!role.getName().equals("superAdmin")){
-                roleList.add(role);
-            }
-        }
+        List<Role> roleList = roleService.findAllDefault();
         List<Staff> staffList =new ArrayList<Staff>();
         for(int i=0;i<num;i++){
             Staff staff = new Staff();
@@ -219,5 +332,76 @@ public class StaffController {
             staffList.add(staff);
         }
         staffService.insert(staffList);
+    }
+
+    /**
+     * 发送邮箱验证码
+     * @param id 用户id
+     * @param operation 操作
+     * @return
+     */
+    @ApiOperation(value = "发送邮箱验证码", notes="发送邮箱验证码")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @GetMapping("/sendVerification")
+    @ResponseBody
+    public R sendVerification(
+            @ApiParam(value="用户id")@RequestParam(name = "id")String id,
+            @ApiParam(value="操作")@RequestParam(required = false,name = "operation") String operation) {
+        if(null==staffService.find(id).getEmail()){
+            return R.failed("用户邮箱不存在");
+        }
+        return staffService.sendVerification(id,operation);
+    }
+
+    /**
+     * 通过邮箱验证码修改密码
+     * @param newPassword
+     * @param userId
+     * @param code
+     * @param operation
+     * @return
+     */
+    @GetMapping("/updatePWByVerificationCode")
+    @ResponseBody
+    public R<Map<String, Object>> updatePWByVerificationCode(
+            String newPassword, String userId,String code,String operation
+    ) {
+        //return this.userService.updatePWByVerificationCode(user, newPassword,code,operation);
+        return null;
+    }
+
+    /**
+     * 根据用户名和邮箱查询用户
+     *
+     * @param userName 用户名
+     * @param email 邮箱
+     * @return 单条数据
+     */
+    @GetMapping("/queryByUserNameAndEmail")
+    public R queryByUserNameAndEmail(@RequestParam("userName") String userName, @RequestParam("email") String email) {
+//        Staff condiction = new Staff();
+//        condiction.setName(userName);
+//        condiction.setEmail(email);
+//        final List<User> users = userService.queryAllByCondition(condiction);
+//        if (users != null && users.size() == 1) {
+//            return R.success(users.get(0));
+//        } else {
+//            return R.failed("没有找到对应信息");s
+//        }
+        return null;
+    }
+
+    /**
+     * 验证码验证
+     * @param code
+     * @param operation
+     * @return
+     */
+    @GetMapping("/verificationCheck")
+    public R<Map<String, Object>> verificationCheck(String email,String code, @RequestParam(required = false) String operation) {
+        //return userService.verificationCheck(email,code, operation);
+        return null;
     }
 }

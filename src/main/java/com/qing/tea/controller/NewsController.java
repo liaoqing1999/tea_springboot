@@ -4,9 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.qing.tea.entity.News;
-import com.qing.tea.entity.NewsDetail;
 import com.qing.tea.service.NewsService;
 import com.qing.tea.utils.R;
+import io.swagger.annotations.*;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
@@ -15,24 +15,49 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-
+@Api(tags  = "资讯操作接口")
 @RestController
 @RequestMapping("news")
 public class NewsController {
+
+    /**
+     * 服务层对象
+     */
     @Resource
     private NewsService newsService;
 
-    @RequestMapping("/getNews")
+    /**
+     * 获取资讯
+     * @param id 资讯id
+     * @return
+     */
+    @ApiOperation(value = "获取资讯", notes="根据id获取资讯")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= News.class)
+    })
+    @GetMapping("/getNews")
     @ResponseBody
-    public R getNews(@RequestParam(name = "id")String id){
+    public R<News> getNews(@ApiParam(value="资讯id",required = true)@RequestParam(name = "id")String id){
         return R.success(newsService.find(id));
     }
 
-    @RequestMapping("getPage")
+    /**
+     * 分页获取资讯
+     * @param page 页数
+     * @param rows 行数
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "获取资讯", notes="根据id获取资讯")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response= Map.class)
+    })
+    @GetMapping("getPage")
     @ResponseBody
-    public R getNewsPage(@RequestParam(name = "page")int page, @RequestParam(name = "rows")int rows,@RequestParam(required =false,name = "cond")String cond){
+    public R<Map<String, Object>> getNewsPage(@ApiParam(value="页数")@RequestParam(name = "page", required = false, defaultValue = "1")int page,
+                                              @ApiParam(value="行数")@RequestParam(name = "rows", required = false, defaultValue = "3")int rows,
+                                              @ApiParam(value="条件")@RequestParam(required =false,name = "cond")String cond){
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         if(parse!=null) {
@@ -65,16 +90,35 @@ public class NewsController {
         return R.success(result);
     }
 
-    @RequestMapping("delete")
+
+    /**
+     * 删除资讯
+     * @param id 资讯id
+     * @return
+     */
+    @ApiOperation(value = "删除资讯", notes="根据id删除资讯")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=String.class)
+    })
+    @DeleteMapping("delete")
     @ResponseBody
-    public R delete(@RequestParam(name = "id")String id){
+    public R delete(@ApiParam(value="资讯id",required = true)@RequestParam(name = "id")String id){
         newsService.delete(id);
         return R.success("");
     }
 
-    @RequestMapping("updateUser")
+    /***
+     * 用户观看资讯后更新资讯
+     * @param news 资讯实体
+     * @return
+     */
+    @ApiOperation(value = "更新用户资讯", notes="用户观看资讯后更新资讯")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=News.class)
+    })
+    @PostMapping("updateUser")
     @ResponseBody
-    public R<News> updateUser(@RequestBody News  news){
+    public R<News> updateUser(@ApiParam(value="资讯实体",required = true)@RequestBody News  news){
         News n = newsService.find(news.getId());
         newsService.update(news.getId(),"up",n.getUp()+news.getUp());
         newsService.update(news.getId(),"down",n.getDown()+news.getDown());
@@ -86,22 +130,51 @@ public class NewsController {
         return R.success(newsService.find(news.getId()));
     }
 
-    @RequestMapping("add")
+    /**
+     * 新增资讯
+     * @param news 资讯实体
+     * @return
+     */
+    @ApiOperation(value = "新增资讯", notes="新增一条资讯记录")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=News.class)
+    })
+    @PostMapping("add")
     @ResponseBody
-    public R<News> add(@RequestBody News  news){
+    public R<News> add(@ApiParam(value="资讯实体",required = true)@RequestBody News  news){
         return R.success(newsService.insert(news));
     }
 
-    @RequestMapping("update")
+
+    /**
+     * 更新资讯
+     * @param news 资讯实体
+     * @return
+     */
+    @ApiOperation(value = "更新资讯", notes="更新一条资讯")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=News.class)
+    })
+    @PostMapping("update")
     @ResponseBody
-    public R<News> update(@RequestBody News  news){
+    public R<News> update(@ApiParam(value="资讯实体",required = true)@RequestBody News  news){
         newsService.update(news);
         return R.success(newsService.find(news.getId()));
     }
 
-    @RequestMapping("chart")
+
+    /**
+     * 资讯分析
+     * @param cond 条件
+     * @return
+     */
+    @ApiOperation(value = "资讯分析", notes="资讯图表分析")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response=Map.class)
+    })
+    @GetMapping("chart")
     @ResponseBody
-    public R<Map<String, Object>> chart(@RequestParam(name = "cond",required =false) String cond) {
+    public R<Map<String, Object>> chart(@ApiParam(value="资讯实体")@RequestParam(name = "cond",required =false) String cond) {
         Criteria criteria = new Criteria();
         JSONObject parse = JSON.parseObject(cond);
         String str = "substr(add(date,28800000),0,10)";

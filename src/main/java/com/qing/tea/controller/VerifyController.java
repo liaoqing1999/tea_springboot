@@ -2,10 +2,8 @@ package com.qing.tea.controller;
 
 import com.qing.tea.utils.R;
 import com.qing.tea.utils.VerifyUtil;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.*;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
@@ -14,12 +12,25 @@ import javax.servlet.http.HttpSession;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Map;
 
+@Api(tags  = "验证码操作接口")
 @RestController
 @RequestMapping("verify")
 public class VerifyController {
     private  HttpSession session;
-    @RequestMapping("getVerify")
+
+    /**
+     * 获取验证码
+     * @param response
+     * @param request
+     * @throws IOException
+     */
+    @ApiOperation(value = "获取验证码", notes="获取验证码")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @GetMapping("getVerify")
     @ResponseBody
     public void getVerify(HttpServletResponse response, HttpServletRequest request) throws IOException {
         //将图片输出给浏览器
@@ -35,9 +46,20 @@ public class VerifyController {
         OutputStream os = response.getOutputStream();
         ImageIO.write(image, "png", os);
     }
-    @RequestMapping("checkVerify")
+
+
+    /**
+     * 验证验证码
+     * @param verify 验证码
+     * @return
+     */
+    @ApiOperation(value = "验证验证码", notes="验证验证码")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功",response = String.class)
+    })
+    @GetMapping("checkVerify")
     @ResponseBody
-    public R checkVerify(@RequestParam(name = "verify")String verify){
+    public R checkVerify(@ApiParam(value="页数",required = true)@RequestParam(name = "verify")String verify){
         String imageCode = (String) session.getAttribute("imageCode");
         if(imageCode.equalsIgnoreCase(verify)){
             return R.success("success");

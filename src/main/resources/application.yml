@@ -13,6 +13,29 @@ spring:
       authentication-database: admin
   jackson:
     default-property-inclusion: non_null
+    #Redis连接配置
+  redis:
+    database: 0
+    host: 39.105.81.9
+    port: 6379
+    timeout: 20000
+    jedis:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: -1
+  mail:
+    host: smtp.qq.com
+    username: 1083548092@qq.com
+    password: taytiudjcjfshhag
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
 
 server:
   port: 8090

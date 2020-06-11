@@ -230,6 +230,24 @@ public class RandomDataUtil {
 
     }
 
+    public static char getRandomCharCode() {
+
+        Random random = new Random();
+
+        /* 随机数字字符 */
+
+        char[] Surname = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+                'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D',
+                'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                'Y', 'Z'};
+        int index = random.nextInt(Surname.length - 1);
+
+        char ch = Surname[index]; //获得一个随机的字符
+
+        return ch;
+
+    }
+
     public static char getRandomLowChar() {
 
         Random random = new Random();
@@ -656,6 +674,34 @@ public class RandomDataUtil {
             }
         }
         return hanYuPinYinResult.toString();
+    }
+
+    /**
+     * 生成随机验证码
+     * @param lenth  长度
+     * @param type 0：全数字   1：全字母  2：数字字母混合
+     * @return
+     */
+    public static String getRandomCode(int lenth,int type) {
+        String content="";
+        switch (type){
+            case 0:
+                for (int i = 0; i < lenth; i++) {
+                    content += getRandomNum(0,9);
+                }
+                break;
+            case 1:
+                for (int i = 0; i < lenth; i++) {
+                    content += getRandomCharCode();
+                }
+                break;
+            case 2:
+                for (int i = 0; i < lenth; i++) {
+                    content += getRandomChar();
+                }
+                break;
+        }
+        return content;
     }
 
     public static void main(String[] args) {
