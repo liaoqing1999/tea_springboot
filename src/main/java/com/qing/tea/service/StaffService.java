@@ -120,7 +120,7 @@ public interface StaffService {
      * @param code
      * @param operation
      */
-    public void updatePWByVerificationCode(String id, String newPassword,String code,String operation);
+    public R updatePWByVerificationCode(String id, String newPassword,String code,String operation);
 
     /**
      * 验证邮箱验证码
@@ -128,5 +128,5 @@ public interface StaffService {
      * @param code
      * @param operation
      */
-    public void verificationCheck(String email,String code, String operation);
+    public R verificationCheck(String email,String code, String operation);
 }

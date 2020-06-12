@@ -208,7 +208,7 @@ public class StaffServiceImpl implements StaffService {
         String key = staff.getEmail() + operation + "check";
         String check = template.opsForValue().get(key);
         if (check != null) {
-            if (Integer.parseInt(check) >= 3) {
+            if (Integer.parseInt(check) >= 2) {
                 template.expire(key, retime, TimeUnit.SECONDS);
                 return R.failed("您今天已连续发送三次验证码，账号今天已锁定");
             } else {
@@ -233,33 +233,29 @@ public class StaffServiceImpl implements StaffService {
      * @return
      */
     @Override
-    public void updatePWByVerificationCode(String id, String newPassword,String code,String operation) {
-       /* Map<String, Object> map=new HashMap<String, Object>();
+    public R updatePWByVerificationCode(String id, String newPassword,String code,String operation) {
         String temp;
         if (operation == null) {
             operation = "";
         }
-        String checkCode = (String) template.opsForHash().get(user.getEmail(), operation + "code");
+        Staff staff = find(id);
+        String checkCode = (String) template.opsForHash().get(staff.getEmail(), operation + "code");
         if (checkCode != null) {
-            temp = (String) template.opsForHash().get(user.getEmail(), "count");
-            if (Integer.parseInt(temp) >= 2) {
-                template.delete(user.getEmail());
+            temp = (String) template.opsForHash().get(staff.getEmail(), "count");
+             if (code.toLowerCase().equals(checkCode.toLowerCase())) {
+                template.opsForValue().set(staff.getEmail()+ operation + "check", "0");
+                update(id,"password",newPassword);
+                return R.success("修改成功");
+            } else if (Integer.parseInt(temp) >= 2) {
+                template.delete(staff.getEmail());
                 return R.failed("您已连续输错三次，验证码已失效");
-            } else if (code.equals(checkCode)) {
-                User updateUser=new User();
-                updateUser.setPassword(newPassword);
-                updateUser.setId(user.getId());
-                template.opsForValue().set(user.getEmail()+ operation + "check", "0");
-                userDao.update(updateUser);
-                map.put("user",this.queryById(user.getId()));
-                return R.success(map, "修改成功");
             } else {
-                template.opsForHash().increment(user.getEmail(), "count", 1);
+                template.opsForHash().increment(staff.getEmail(), "count", 1);
                 return R.failed("验证失败");
             }
         } else {
             return R.failed("请输入验证码");
-        }*/
+        }
     }
 
 
@@ -270,26 +266,26 @@ public class StaffServiceImpl implements StaffService {
      * @return
      */
     @Override
-    public void verificationCheck(String email,String code, String operation) {
-       /* String temp;
-        if (operation == null) {
+    public R verificationCheck(String email,String code, String operation) {
+        String temp;
+        if (null == operation) {
             operation = "";
         }
         String checkCode = (String) template.opsForHash().get(email, operation + "code");
         if (checkCode != null) {
             temp = (String) template.opsForHash().get(email, "count");
-            if (Integer.parseInt(temp) >= 2) {
+            if (code.toLowerCase().equals(checkCode.toLowerCase())) {
+                template.opsForValue().set(email+ operation + "check", "0");
+                return R.success("验证成功");
+            } else if (Integer.parseInt(temp) >= 2) {
                 template.delete(email);
                 return R.failed("您已连续输错三次，验证码已失效");
-            } else if (code.equals(checkCode)) {
-                template.opsForValue().set(email+ operation + "check", "0");
-                return R.success(null, "验证成功");
             } else {
                 template.opsForHash().increment(email, "count", 1);
                 return R.failed("验证失败");
             }
         } else {
-            return R.failed("验证码超过5分钟已失效！");
-        }*/
+            return R.failed("验证码已失效！");
+        }
     }
 }

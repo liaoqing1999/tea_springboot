@@ -363,45 +363,63 @@ public class StaffController {
      * @param operation
      * @return
      */
+    @ApiOperation(value = "通过邮箱验证码修改密码", notes="通过邮箱验证码修改密码")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
     @GetMapping("/updatePWByVerificationCode")
     @ResponseBody
-    public R<Map<String, Object>> updatePWByVerificationCode(
-            String newPassword, String userId,String code,String operation
+    public R updatePWByVerificationCode(
+            @ApiParam(value="用户id")@RequestParam(name = "id")String id,
+            @ApiParam(value="新密码")@RequestParam(name = "password")String password,
+            @ApiParam(value="邮箱验证码")@RequestParam(name = "code")String code,
+            @ApiParam(value="操作")@RequestParam(name = "operation")String operation
     ) {
-        //return this.userService.updatePWByVerificationCode(user, newPassword,code,operation);
-        return null;
+        return this.staffService.updatePWByVerificationCode(id, password,code,operation);
     }
 
     /**
      * 根据用户名和邮箱查询用户
      *
-     * @param userName 用户名
+     * @param name 用户名
      * @param email 邮箱
      * @return 单条数据
      */
-    @GetMapping("/queryByUserNameAndEmail")
-    public R queryByUserNameAndEmail(@RequestParam("userName") String userName, @RequestParam("email") String email) {
-//        Staff condiction = new Staff();
-//        condiction.setName(userName);
-//        condiction.setEmail(email);
-//        final List<User> users = userService.queryAllByCondition(condiction);
-//        if (users != null && users.size() == 1) {
-//            return R.success(users.get(0));
-//        } else {
-//            return R.failed("没有找到对应信息");s
-//        }
-        return null;
+    @ApiOperation(value = "根据用户名和邮箱查询用户", notes="根据用户名和邮箱查询用户")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @ResponseBody
+    @GetMapping("/nameEmail")
+    public R queryByUserNameAndEmail(
+            @ApiParam(value="用户名")@RequestParam("name") String name,
+            @ApiParam(value="邮箱")@RequestParam("email") String email) {
+        Criteria criteria = Criteria.where("name").is(name);
+        criteria.and("email").is(email);
+        List<Staff> staffList = staffService.findByCond(criteria);
+        if(null!=staffList&&staffList.size()>0){
+            return R.success(staffList.get(0));
+        }
+        return R.failed("请输入正确的用户名和绑定的邮箱");
     }
 
     /**
      * 验证码验证
+     * @param email
      * @param code
      * @param operation
      * @return
      */
+    @ApiOperation(value = "验证码验证", notes="验证码验证")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "成功")
+    })
+    @ResponseBody
     @GetMapping("/verificationCheck")
-    public R<Map<String, Object>> verificationCheck(String email,String code, @RequestParam(required = false) String operation) {
-        //return userService.verificationCheck(email,code, operation);
-        return null;
+    public R verificationCheck(
+            @ApiParam(value="邮箱")@RequestParam("email") String email,
+            @ApiParam(value="验证码")@RequestParam("code") String code,
+            @ApiParam(value="操作")@RequestParam(required = false) String operation) {
+        return staffService.verificationCheck(email,code, operation);
     }
 }
