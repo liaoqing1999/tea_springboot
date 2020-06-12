@@ -37,7 +37,7 @@ public class SwaggerApp {
                 //页面标题
                 .title("喝好茶溯源系统后端接口文档")
                 //创建人
-                .contact(new Contact("Bryan", "http://blog.bianxh.top/", "1609614437@qq.com"))
+                .contact(new Contact("LiaoQing", "https://blog.csdn.net/liaoqing1999", "1609614437@qq.com"))
                 //版本号
                 .version("1.0")
                 //描述
